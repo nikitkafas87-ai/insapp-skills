@@ -37,11 +37,11 @@
 | `base64-bug-report` | `insapp-skills/reports/standalone/base64-bug-report/index.html`, commit источника `788a244`. |
 | `base64-decode-bug-report` | `insapp-skills/reports/standalone/base64-decode-bug-report/index.html`, commit источника `929aa76`. |
 
-## Проверить Перед Решением
+## Старый Дубль Автотестов
 
 | Репозиторий | Почему не удалять сразу |
 |---|---|
-| `autotests` | Похож на старую копию C# autotests. Текущая локальная рабочая копия уже использует `badges-osago` как `origin`, но перед удалением надо убедиться, что в `autotests` не осталось уникальной истории или нужных старых журналов. |
+| `autotests` | Сравнение показало, что `autotests/main` является предком `badges-osago/main` и `badges-osago/codex/osago-autotests`; уникальных коммитов в `autotests` нет. Удаление через GitHub API было заблокировано правами credential (`403 Must have admin rights to Repository`), поэтому репозиторий заархивирован и помечен как старый дубль. |
 
 ## Если Нужен Минимум Репозиториев
 
@@ -50,7 +50,7 @@
 3. Обновить ссылки в `reports-index/index.html`.
 4. Проверить каждую публичную ссылку после Pages build.
 5. После этого удалить 9 standalone report repos.
-6. Отдельно проверить `autotests`; если уникального содержимого нет, архивировать или удалить.
+6. `autotests` уже проверен и заархивирован как старый дубль; удалить вручную, если нужен полный cleanup и есть admin/delete_repo-доступ.
 7. Удалить `base64-bug-report` и `base64-decode-bug-report`, если пользователь подтвердит удаление.
 
 Без миграции ссылок лучше не удалять standalone report repos, потому что это сломает публичные URL из `reports-index`.
