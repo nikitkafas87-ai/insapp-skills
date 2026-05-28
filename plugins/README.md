@@ -1,12 +1,11 @@
-# Plugins
+# Плагины
 
-No personal Codex plugin source is currently exported.
+Исходники личных Codex-плагинов сейчас не экспортированы.
 
-Installed bundled plugins are enabled through Codex marketplaces and cache paths:
+Установленные bundled-плагины подключаются через Codex marketplaces и runtime-кеши:
 
 - `documents@openai-primary-runtime`
 - `spreadsheets@openai-primary-runtime`
 - `presentations@openai-primary-runtime`
 
-These are runtime-managed artifacts and should not be committed here. Keep only personal plugin source code in this folder if a custom plugin is created later.
-
+Это runtime-артефакты, которыми управляет Codex, поэтому их не нужно коммитить. Если позже появится кастомный личный плагин, его исходники стоит хранить в этой папке.

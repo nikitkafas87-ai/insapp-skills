@@ -1,6 +1,6 @@
-# Sanitized Codex config fragments.
-# Copy the parts you need into %USERPROFILE%\.codex\config.toml.
-# Do not commit real token values.
+# Очищенные фрагменты Codex config.
+# Скопируй нужные блоки в %USERPROFILE%\.codex\config.toml.
+# Не коммить реальные значения токенов.
 
 [mcp_servers.google-sheets]
 command = "C:\\Users\\nikit\\.local\\bin\\uvx.exe"
@@ -52,4 +52,3 @@ enabled = true
 
 [plugins."presentations@openai-primary-runtime"]
 enabled = true
-

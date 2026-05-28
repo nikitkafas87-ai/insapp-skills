@@ -1,29 +1,29 @@
-# HTML Reports Archive
+# Архив HTML-Отчетов
 
-Archived from the public GitHub Pages index:
+Архивировано из публичного индекса GitHub Pages:
 
 `https://nikitkafas87-ai.github.io/reports-index/`
 
-Passwords from the public index are not duplicated in this README. The HTML source is preserved as captured from the source repositories.
+Пароли из публичного индекса не дублируются в этом README. HTML сохранен в том виде, в котором он был получен из исходных репозиториев.
 
-## Source Index
+## Исходный Индекс
 
-| Source | Local path | Commit |
+| Источник | Локальный путь | Коммит |
 |---|---|---|
 | `https://github.com/nikitkafas87-ai/reports-index.git` | `reports-index/` | `a4774f1` |
 
-## Reports Stored Inside `reports-index`
+## Отчеты Внутри `reports-index`
 
-| Report | Public URL | Local path |
+| Отчет | Публичный URL | Локальный путь |
 |---|---|---|
 | Бейджи ОСАГО | `https://nikitkafas87-ai.github.io/reports-index/badges-osago-report/` | `reports-index/badges-osago-report/index.html` |
 | Кроссы ОСАГО — активные ключи | `https://nikitkafas87-ai.github.io/reports-index/osago-crosses-report/` | `reports-index/osago-crosses-report/index.html` |
 | Подключенность СК ОСАГО — активные ключи | `https://nikitkafas87-ai.github.io/reports-index/osago-insurers-report/` | `reports-index/osago-insurers-report/index.html` |
-| Prod Dashboard regression | `https://nikitkafas87-ai.github.io/reports-index/prod-dashboard-regression-2026-05-12/` | `reports-index/prod-dashboard-regression-2026-05-12/index.html` |
+| Регресс Prod Dashboard | `https://nikitkafas87-ai.github.io/reports-index/prod-dashboard-regression-2026-05-12/` | `reports-index/prod-dashboard-regression-2026-05-12/index.html` |
 
-## Standalone Report Repositories
+## Отдельные Репозитории С Отчетами
 
-| Report repo | Public URL | Local path | Commit |
+| Репозиторий отчета | Публичный URL | Локальный путь | Коммит |
 |---|---|---|---|
 | `kasko-drive-analytics-march` | `https://nikitkafas87-ai.github.io/kasko-drive-analytics-march/` | `standalone/kasko-drive-analytics-march/index.html` | `89f8add` |
 | `kasko-drive-disabled` | `https://nikitkafas87-ai.github.io/kasko-drive-disabled/` | `standalone/kasko-drive-disabled/index.html` | `740c11c` |
@@ -34,4 +34,3 @@ Passwords from the public index are not duplicated in this README. The HTML sour
 | `kasko-regression-report` | `https://nikitkafas87-ai.github.io/kasko-regression-report/` | `standalone/kasko-regression-report/index.html` | `df07645` |
 | `ab-black-friday-errors-2026-04-24` | `https://nikitkafas87-ai.github.io/ab-black-friday-errors-2026-04-24/` | `standalone/ab-black-friday-errors-2026-04-24/index.html` | `c6d6b6d` |
 | `ins1657-kasko-review` | `https://nikitkafas87-ai.github.io/ins1657-kasko-review/` | `standalone/ins1657-kasko-review/index.html` | `c0237e3` |
-

@@ -1,11 +1,10 @@
-# Guides
+# Гайды
 
-Long-lived setup notes and workflows belong here.
+Здесь лежат долговечные инструкции по настройке и рабочие процессы.
 
-Suggested future guides:
+Что стоит добавить дальше:
 
-- Codex fresh-machine setup.
-- MCP credential setup without committing secrets.
-- Publishing reports to GitHub Pages.
-- Tracker reporting conventions.
-
+- Настройка Codex на новой машине.
+- Настройка MCP-доступов без коммита секретов.
+- Публикация отчетов на GitHub Pages.
+- Правила оформления отчетов в Tracker.

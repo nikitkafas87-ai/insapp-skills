@@ -1,4 +1,4 @@
-# Local secrets and runtime state
+# Локальные секреты и runtime-состояние
 .env
 *.local.toml
 *.secret.*
@@ -7,21 +7,20 @@ auth.json
 *.sqlite-shm
 *.sqlite-wal
 
-# Python/Node build artifacts
+# Артефакты Python/Node
 __pycache__/
 *.py[cod]
 node_modules/
 dist/
 build/
 
-# Local MCP session/cache data
+# Локальные данные сессий и кешей MCP
 session/
 .venv/
 venv/
 
-# OS/editor noise
+# Шум ОС и редакторов
 .DS_Store
 Thumbs.db
 .idea/
 .vscode/
-

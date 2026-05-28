@@ -1,18 +1,17 @@
-# MCP Servers
+# MCP-Серверы
 
-This folder stores local MCP server code and setup notes that are maintained with the skills repository.
+В этой папке хранится код локальных MCP-серверов и заметки по настройке, которые сопровождаются вместе со скиллами.
 
-Tracked here:
+В репозитории хранится:
 
-- `tracker-attachments/` - local Python MCP server for uploading Tracker attachments, checklist operations, and inline attachment comments.
+- `tracker-attachments/` - локальный Python MCP-сервер для загрузки вложений в Tracker, операций с чеклистами и inline-вложений в комментариях.
 
-Not vendored here:
+Не вендорится здесь:
 
-- `google-sheets` - installed through `uvx mcp-google-sheets`.
-- `playwright` - installed through `npx @playwright/mcp@latest`.
-- `context7` - installed through `npx -y @upstash/context7-mcp`.
-- `tracker` - installed through `uvx yandex-tracker-mcp@latest`.
-- `insapp-db` - remote HTTP MCP, configured with a local API key.
+- `google-sheets` - устанавливается через `uvx mcp-google-sheets`.
+- `playwright` - устанавливается через `npx @playwright/mcp@latest`.
+- `context7` - устанавливается через `npx -y @upstash/context7-mcp`.
+- `tracker` - устанавливается через `uvx yandex-tracker-mcp@latest`.
+- `insapp-db` - удаленный HTTP MCP, настраивается локальным API-ключом.
 
-Use `config/codex.config.example.toml` as a sanitized config reference.
-
+Очищенный пример конфига лежит в `config/codex.config.example.toml`.
