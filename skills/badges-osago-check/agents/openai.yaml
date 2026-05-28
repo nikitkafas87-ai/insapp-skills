@@ -1,0 +1,7 @@
+interface:
+  display_name: "Badges OSAGO Check"
+  short_description: "Check OSAGO badge settings"
+  default_prompt: "Use $badges-osago-check to audit OSAGO badge settings for these ApiKeys and generate the HTML report."
+policy:
+  allow_implicit_invocation: true
+

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feature Doc Writer"
+  short_description: "Feature docs from QA testing context"
+  default_prompt: "Use $feature-doc-writer to write a tester-facing Markdown article for a verified feature."

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>АБ Чёрная пятница — Отчёт по ошибкам 24.04.2026</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; color: #1a1a2e; line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; font-size: 1.8em; padding: 20px 0; color: #16213e; border-bottom: 3px solid #e94560; margin-bottom: 20px; }
+        h2 { font-size: 1.4em; color: #16213e; margin: 25px 0 12px; padding-bottom: 6px; border-bottom: 2px solid #ddd; }
+        h3 { font-size: 1.15em; color: #0f3460; margin: 18px 0 8px; }
+        .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+        .card { background: white; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .card .num { font-size: 2em; font-weight: 700; }
+        .card .label { font-size: 0.9em; color: #666; margin-top: 4px; }
+        .card.red .num { color: #e94560; }
+        .card.orange .num { color: #f39c12; }
+        .card.green .num { color: #27ae60; }
+        .card.blue .num { color: #2980b9; }
+
+        table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        th { background: #16213e; color: white; padding: 10px 12px; text-align: left; font-size: 0.9em; }
+        td { padding: 9px 12px; border-bottom: 1px solid #eee; font-size: 0.9em; }
+        tr:hover { background: #f8f9ff; }
+        tr:last-child td { border-bottom: none; }
+        .prio-p0 { background: #fde8e8 !important; font-weight: 600; }
+        .prio-p1 { background: #fef3e2 !important; }
+        .prio-p2 { background: #e8f4fd !important; }
+
+        .section { background: white; border-radius: 10px; padding: 20px; margin: 15px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; font-weight: 600; }
+        .tag-p0 { background: #e94560; color: white; }
+        .tag-p1 { background: #f39c12; color: white; }
+        .tag-p2 { background: #2980b9; color: white; }
+        .tag-active { background: #e94560; color: white; }
+        .tag-stopped { background: #27ae60; color: white; }
+        .tag-bg { background: #95a5a6; color: white; }
+
+        .detail-block { background: #f8f9ff; border-left: 4px solid #2980b9; padding: 12px 16px; margin: 8px 0; border-radius: 0 6px 6px 0; font-size: 0.9em; }
+        .detail-block code { background: #e8e8e8; padding: 1px 5px; border-radius: 3px; font-size: 0.88em; }
+        .error-flow { background: #fff3f3; border-left: 4px solid #e94560; padding: 12px 16px; margin: 8px 0; border-radius: 0 6px 6px 0; font-size: 0.88em; }
+        .new-finding { background: #e8ffe8; border-left: 4px solid #27ae60; padding: 12px 16px; margin: 8px 0; border-radius: 0 6px 6px 0; font-size: 0.9em; }
+
+        .timeline { display: grid; grid-template-columns: 60px 1fr; gap: 4px 10px; margin: 10px 0; font-size: 0.85em; }
+        .timeline .hour { font-weight: 700; color: #0f3460; text-align: right; }
+        .timeline .bar { background: #e94560; height: 18px; border-radius: 3px; min-width: 2px; }
+
+        .footer { text-align: center; color: #999; font-size: 0.8em; margin-top: 30px; padding: 15px; }
+        .collapsible { cursor: pointer; padding: 10px 15px; background: #f0f2f5; border: none; text-align: left; width: 100%; font-size: 1em; font-weight: 600; color: #16213e; border-radius: 6px; margin-top: 8px; }
+        .collapsible:hover { background: #e0e3ea; }
+        .collapsible-content { display: none; padding: 10px 0; }
+        .collapsible-content.show { display: block; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<h1>Альфа-Банк «Чёрная пятница» — Анализ ошибок<br><small>24.04.2026 | API ключ: ОСАГО API (Целевое решение)</small></h1>
+
+<div class="summary-cards">
+    <div class="card blue"><div class="num">20 813</div><div class="label">Заявок за сутки</div></div>
+    <div class="card green"><div class="num">5 004</div><div class="label">Оплачено</div></div>
+    <div class="card red"><div class="num">919</div><div class="label">DirectPayment ошибок</div></div>
+    <div class="card orange"><div class="num">2 500+</div><div class="label">Ошибок интеграции</div></div>
+</div>
+
+<!-- ============================================ -->
+<h2>1. Приоритеты проблем</h2>
+
+<table>
+    <tr><th>Приоритет</th><th>Проблема</th><th>Ошибок</th><th>Влияние</th></tr>
+    <tr class="prio-p0"><td><span class="tag tag-p0">P0</span></td><td>Ингосстрах: изменилась премия → блокировка оплаты + падение кросса</td><td>137 + 62</td><td>Конверсия кросс-продаж</td></tr>
+    <tr class="prio-p0"><td><span class="tag tag-p0">P0</span></td><td>МАКС: IndexOutOfRangeException — парсинг SOAP XML падает</td><td>1 049+</td><td>229 офферов не выдано</td></tr>
+    <tr class="prio-p0"><td><span class="tag tag-p0">P0</span></td><td>maxMass баг — маппинг не заполняет массу для грузовых ТС</td><td>464+</td><td>5 СК одновременно</td></tr>
+    <tr class="prio-p1"><td><span class="tag tag-p1">P1</span></td><td>Сбер: 504 Gateway Timeout — новый сбой с 12:19</td><td>63+</td><td>Активно</td></tr>
+    <tr class="prio-p1"><td><span class="tag tag-p1">P1</span></td><td>Зетта: 502 Bad Gateway — nginx падает под нагрузкой</td><td>203</td><td>58 офферов</td></tr>
+    <tr class="prio-p1"><td><span class="tag tag-p1">P1</span></td><td>ВСК: 7 229 «Отказ» при расчёте + 1 259 КБМ + 194 «дата документа»</td><td>8 682</td><td>8 502 rejected оффера</td></tr>
+    <tr class="prio-p1"><td><span class="tag tag-p1">P1</span></td><td>Ренессанс/InTouch: нестабильность весь день</td><td>73</td><td>Стабильность</td></tr>
+    <tr class="prio-p1"><td><span class="tag tag-p1">P1</span></td><td>Югория: 504 Gateway Timeout</td><td>246</td><td>С 09:00 до 11:00</td></tr>
+    <tr class="prio-p2"><td><span class="tag tag-p2">P2</span></td><td>Альфа КАСКО: «Требуется андеррайтинг»</td><td>62</td><td>Бизнес-ограничение</td></tr>
+    <tr class="prio-p2"><td><span class="tag tag-p2">P2</span></td><td>СОГЛАСИЕ: KBM async NullReferenceException</td><td>19</td><td>Фоновое</td></tr>
+    <tr class="prio-p2"><td><span class="tag tag-p2">P2</span></td><td>BSOv2/Астроволга: ArgumentNullException в Int64.Parse</td><td>45</td><td>Фоновое</td></tr>
+</table>
+
+<!-- ============================================ -->
+<h2>2. DirectPayment ошибки по СК</h2>
+
+<table>
+    <tr><th>#</th><th>СК</th><th>Ошибок</th><th>Доля</th><th>Главная причина</th></tr>
+    <tr><td>1</td><td><b>ВСК</b></td><td>367</td><td>40%</td><td>Generic «Отказ» (6 752 quote) + КБМ (1 259) + дата документа (194)</td></tr>
+    <tr><td>2</td><td><b>Ингосстрах</b></td><td>177</td><td>19%</td><td>«Изменилась премия» — премия меняется между GetOffer и оплатой</td></tr>
+    <tr><td>3</td><td><b>Югория</b></td><td>152</td><td>17%</td><td>Status: 6 при расчёте + КБМ ошибки</td></tr>
+    <tr><td>4</td><td><b>Альфа</b></td><td>83</td><td>9%</td><td>GetPaymentLink + maxMass баг</td></tr>
+    <tr><td>5</td><td><b>Согласие</b></td><td>67</td><td>7%</td><td>GetContractStatus + «::ЧЯ №3: 704/10»</td></tr>
+    <tr><td>6</td><td><b>МАКС</b></td><td>52</td><td>6%</td><td>Scoring отказы + HTML вместо JSON</td></tr>
+    <tr><td>7</td><td><b>Зетта</b></td><td>12</td><td>1%</td><td>GetPaymentLink failures</td></tr>
+    <tr><td>8</td><td><b>РЕСО</b></td><td>6</td><td>1%</td><td>Zero commission + data validation</td></tr>
+    <tr><td>9</td><td><b>РГС</b></td><td>3</td><td>&lt;1%</td><td>Contract number not received</td></tr>
+    <tr style="font-weight:700; background:#f0f2f5"><td></td><td><b>Итого</b></td><td><b>919</b></td><td><b>100%</b></td><td></td></tr>
+</table>
+
+<!-- ============================================ -->
+<h2>3. Кросс-продажа (UpsaleType=15)</h2>
+
+<div class="section">
+<table>
+    <tr><th>Метрика</th><th>Значение</th></tr>
+    <tr><td>Успешных кросс-операций (status=2)</td><td>709</td></tr>
+    <tr><td>Ошибок кросс (status=3)</td><td><b style="color:#e94560">63 (8.7%)</b></td></tr>
+    <tr><td>В процессе (status=1)</td><td>63</td></tr>
+    <tr><td>HTTP уровень</td><td>Все 200 OK</td></tr>
+</table>
+
+<div class="detail-block">
+    <b>#1 причина падения кросса:</b> Ингосстрах меняет премию ОСАГО между выдачей оффера и InitDirectPayment → Insapp блокирует прямую оплату → кросс падает каскадно.<br>
+    <b>Пример:</b> Расчёт 1 → <code>premSum: 5 308.86</code>, Расчёт 2 (2 мин спустя) → <code>premSum: 5 309.23</code>. Разница = 0.37 руб.
+</div>
+
+<div class="detail-block">
+    <b>Альфа КАСКО «андеррайтинг»:</b> 62 ошибки (48 заявок). Альфа требует ручной андеррайтинг для КАСКО от бесполисных (UpsaleType=15) к чужим СК. <b>Бизнес-ограничение, не баг.</b>
+</div>
+</div>
+
+<!-- ============================================ -->
+<h2>4. Детальный разбор по СК</h2>
+
+<!-- ВСК -->
+<button class="collapsible" onclick="toggleSection('vsk')">▶ ВСК — 367 DirectPayment + 8 502 rejected офферов</button>
+<div id="vsk" class="collapsible-content">
+<div class="section">
+<h3>Quote stage (VskLogs)</h3>
+<table>
+    <tr><th>HTTP код</th><th>Кол-во</th><th>Описание</th></tr>
+    <tr><td>200 OK</td><td>19 054</td><td>Успешный расчёт котировки</td></tr>
+    <tr><td style="color:#e94560; font-weight:700">400 BadRequest</td><td><b>7 203</b></td><td>6 752 quotes + 329 policies + 122 files</td></tr>
+    <tr><td>202 Accepted</td><td>87</td><td>Async operations</td></tr>
+    <tr><td>503 Unavailable</td><td>8</td><td>Service unavailable</td></tr>
+</table>
+
+<h3>BusinessLogs разбивка (LogLevel=3)</h3>
+<table>
+    <tr><th>Категория</th><th>Сообщение</th><th>Кол-во</th></tr>
+    <tr><td>ValidateResponse</td><td>«Невалидные входящие параметры» (generic Отказ)</td><td><b>7 229</b></td></tr>
+    <tr><td>FillCalc</td><td>«неверный КБМ»</td><td><b>1 259</b></td></tr>
+    <tr><td>ValidateResponse</td><td>«Внутренняя (непредвиденная) ошибка»</td><td>19</td></tr>
+    <tr><td>Fill</td><td>«При создании договора изменилась сумма»</td><td>16</td></tr>
+    <tr><td>ToCategory</td><td>«Невозможно застраховать данную категорию»</td><td>4</td></tr>
+</table>
+
+<div class="error-flow">
+    <b>«Дата документа» — 194 ошибки (полис-стейдж):</b><br>
+    Возвращает: <code>«Дата документа должна быть не раньше даты начала выдачи документов данного вида (дата документа: 1997-06-17)»</code><br>
+    URL: <code>/osago/policies</code> (создание полиса). Паспорта с датой выдачи &lt;1997 — баг маппинга Insapp.
+</div>
+
+<div class="error-flow">
+    <b>Generic «Отказ» — 6 744 ошибки (quote-стейдж):</b><br>
+    ВСК возвращает <code>code: 3, INVALID_ARGUMENT, "Отказ"</code> без конкретной причины. Insapp не может классифицировать.
+</div>
+</div>
+</div>
+
+<!-- Ингосстрах -->
+<button class="collapsible" onclick="toggleSection('ingos')">▶ Ингосстрах — 177 DirectPayment + «Изменилась премия»</button>
+<div id="ingos" class="collapsible-content">
+<div class="section">
+<div class="error-flow">
+    <b>P0: «Изменилась премия» — 137 блокировок оплаты</b><br>
+    <b>Флоу:</b> GetOffer (premSum: 5 308.86) → InitDirectPayment (premSum: 5 309.23) → <code>«Изменилась премия по офферу. Прямая оплата остановлена до пересчёта комиссии.»</code><br>
+    <b>Следствие:</b> Кросс UpsaleType=15 падает каскадно — 62 из 708 = 8.7% ошибок кросс-продажи.<br>
+    <b>Вердикт:</b> #1 проблема по влиянию на конверсию кросс-продаж.
+</div>
+
+<h3>Кросс-СК влияние</h3>
+<table>
+    <tr><th>СК</th><th>«Изменилась премия»</th><th>%</th></tr>
+    <tr><td>Ингосстрах</td><td>136</td><td>99.3%</td></tr>
+    <tr><td>РЕСО</td><td>1</td><td>0.7%</td></tr>
+</table>
+</div>
+</div>
+
+<!-- МАКС -->
+<button class="collapsible" onclick="toggleSection('maks')">▶ МАКС — 1 049+ IndexOutOfRangeException</button>
+<div id="maks" class="collapsible-content">
+<div class="section">
+<div class="error-flow">
+    <b>P0: IndexOutOfRangeException в SendRequestRaw</b><br>
+    <b>Файл:</b> <code>MaksClient.cs:105</code><br>
+    <b>Когда:</b> 08:20–10:10 (остановлено), возобновилось 12:09. Пик 10:00 — 406 ошибок/час.<br>
+    <b>Причина:</b> Баг Insapp. При нагрузке парсинг SOAP XML-ответа падает — индекс выходит за границы массива.<br>
+    <b>Всего:</b> 1 049+ ошибок. 229 офферов не выдано.
+</div>
+</div>
+</div>
+
+<!-- maxMass -->
+<button class="collapsible" onclick="toggleSection('mass')">▶ НОВАЯ НАХОДКА: maxMass баг — 464+ ошибок по 5 СК</button>
+<div id="mass" class="collapsible-content">
+<div class="section">
+<div class="new-finding">
+    <b>Суть:</b> При категории ТС «грузовые» или «С» — поле maxMass (максимальная разрешённая масса) либо отсутствует, либо передано некорректно. Бьёт по всем СК одновременно.<br>
+    <b>Статус:</b> Баг маппинга Insapp — поле не заполняется корректно для грузовых ТС.
+</div>
+<table>
+    <tr><th>СК</th><th>Ошибок</th><th>Сообщение от СК</th></tr>
+    <tr><td>Ингосстрах</td><td><b>315</b></td><td>«Для типов ТС 'Грузовые' должно быть заполнено значение 'Разр. масса' (брутто)!»</td></tr>
+    <tr><td>РЕСО</td><td><b>138</b></td><td>«Отсутствует или неверно заполнен параметр [CarWeight]»</td></tr>
+    <tr><td>Сбер</td><td><b>11</b></td><td>«Разрешённая максимальная масса должна быть в интервале 3500–150000 кг»</td></tr>
+    <tr><td>РГС</td><td>affected</td><td>«invalidByJSD — maxMass: обязательно к заполнению!»</td></tr>
+    <tr><td>Астроволга</td><td>affected</td><td>«Поле data.car.mass_max. Поле обязательно, если это категория С»</td></tr>
+</table>
+</div>
+</div>
+
+<!-- Зетта -->
+<button class="collapsible" onclick="toggleSection('zetta')">▶ Зетта — 203 ошибки, 502 Bad Gateway</button>
+<div id="zetta" class="collapsible-content">
+<div class="section">
+<div class="error-flow">
+    <b>Тип:</b> <code>JsonReaderException: Unexpected character '&lt;'</code> — парсит JSON, получает HTML<br>
+    <b>Когда:</b> 08:36–11:55. Пик 11:00 — 202 ошибки/час.<br>
+    <b>Причина:</b> API Зетты возвращает <b>502 Bad Gateway (nginx)</b> с HTML-страницей вместо JSON.<br>
+    <b>Файл:</b> <code>ZettaClient.cs:59</code>
+</div>
+</div>
+</div>
+
+<!-- Югория -->
+<button class="collapsible" onclick="toggleSection('ugoria')">▶ Югория — 246 ошибок, 504 Gateway Timeout</button>
+<div id="ugoria" class="collapsible-content">
+<div class="section">
+<div class="error-flow">
+    <b>Тип:</b> <code>System.Exception: Ugoria Gateway timeout - 504</code><br>
+    <b>Когда:</b> 09:00–11:00. Снизилось после 11:00.<br>
+    <b>Файл:</b> <code>UgoriaClient.cs:106</code>
+</div>
+</div>
+</div>
+
+<!-- Сбер -->
+<button class="collapsible" onclick="toggleSection('sber')">▶ Сбер — 63+ ошибок, 504 Gateway Timeout (НОВЫЙ сбой)</button>
+<div id="sber" class="collapsible-content">
+<div class="section">
+<div class="error-flow">
+    <b>Тип:</b> <code>System.Exception: Не удалось обработать ответ. SberLog Url: /auto/api/partner-gateway/v1/application/calculation Code: GatewayTimeout</code><br>
+    <b>Когда:</b> с 12:19, 63 ошибки за 30 минут.<br>
+    <b>Статус:</b> АКТИВНО. Сбер не справляется с нагрузкой.
+</div>
+</div>
+</div>
+
+<!-- РГС -->
+<button class="collapsible" onclick="toggleSection('rgs')">▶ РГС — 85 ошибок, FaultException (BERST)</button>
+<div id="rgs" class="collapsible-content">
+<div class="section">
+<div class="error-flow">
+    <b>Тип:</b> <code>FaultException: Failed to initialize JNDI context</code><br>
+    <b>Когда:</b> <b>ТОЛЬКО 10:24</b> — 85 ошибок за 2 секунды (10:24:20–10:24:22)<br>
+    <b>Причина:</b> РГС SOAP-сервис (WebLogic) упал — <code>java.rmi.ConnectException: This RJVM has already been shutdown</code><br>
+    <b>Статус:</b> Единовременный сбой. РГС перезапустился.
+</div>
+</div>
+</div>
+
+<!-- Согласие -->
+<button class="collapsible" onclick="toggleSection('soglasie')">▶ СОГЛАСИЕ — KBM async NullReferenceException</button>
+<div id="soglasie" class="collapsible-content">
+<div class="section">
+<div class="error-flow">
+    <b>Тип:</b> <code>NullReferenceException</code> в <code>SoglasieMapper.cs:643</code> — <code>Fill(Offer, KbmResponse)</code><br>
+    <b>Причина:</b> KBM-запрос возвращает async-ответ с <code>processingResult: null</code>. Insapp поллит 5 раз (~7 сек), но результат не приходит. Передаёт null в маппер → NullRef.<br>
+    <b>Статус:</b> Усугубляется под нагрузкой — async-механизм СОГЛАСИЯ не успевает.
+</div>
+</div>
+</div>
+
+<!-- Ренессанс -->
+<button class="collapsible" onclick="toggleSection('renessans')">▶ Ренессанс/InTouch — 73 ошибки, нестабильность весь день</button>
+<div id="renessans" class="collapsible-content">
+<div class="section">
+<table>
+    <tr><th>Тип ошибки</th><th>Кол-во</th><th>Когда</th></tr>
+    <tr><td>Hostname BadRequest</td><td>12</td><td>05:43–11:58</td></tr>
+    <tr><td>504 GatewayTimeout</td><td>30</td><td>03:10–11:20</td></tr>
+    <tr><td>502/503 BadGateway/ServiceUnavailable</td><td>16</td><td>01:00–01:03 (кратковременный)</td></tr>
+    <tr><td>HttpIOException</td><td>6</td><td>10:06–12:52</td></tr>
+    <tr><td>SocketException</td><td>3</td><td>09:57–11:50</td></tr>
+    <tr><td>getAccountStatus timeout</td><td>6</td><td>09:52</td></tr>
+    <tr><td>InTouch (тот же endpoint)</td><td>11</td><td>Весь день</td></tr>
+</table>
+</div>
+</div>
+
+<!-- ============================================ -->
+<h2>5. Динамика по часам</h2>
+
+<div class="section">
+<table>
+    <tr><th>Час</th><th>МАКС</th><th>Зетта</th><th>Югория</th><th>РГС</th><th>Согласие</th><th>Absolut</th><th>Итого</th></tr>
+    <tr><td>00</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>3</td><td>35</td></tr>
+    <tr><td>08</td><td>36</td><td>1</td><td>0</td><td>0</td><td>1</td><td>3</td><td>63</td></tr>
+    <tr><td>09</td><td>0</td><td>0</td><td>14</td><td>0</td><td>1</td><td>3</td><td>145</td></tr>
+    <tr><td><b>10</b></td><td><b>406</b></td><td>0</td><td>12</td><td><b>85</b></td><td>6</td><td>3</td><td><b>684</b></td></tr>
+    <tr><td><b>11</b></td><td>0</td><td><b>202</b></td><td>3</td><td>0</td><td>8</td><td>3</td><td><b>334</b></td></tr>
+    <tr><td>12</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>~50</td></tr>
+</table>
+</div>
+
+<!-- ============================================ -->
+<h2>6. Прочие ошибки</h2>
+
+<div class="section">
+<table>
+    <tr><th>#</th><th>Проблема</th><th>Ошибок</th><th>Тип</th><th>Статус</th></tr>
+    <tr><td>1</td><td>Альфа КАСКО ValidateResponse NullRef (SendRecommendedCarPriceRequest)</td><td>20</td><td>NullReferenceException</td><td><span class="tag tag-active">Активно</span></td></tr>
+    <tr><td>2</td><td>АСТРО-ВОЛГА BSOv2 (Int64.Parse(null) при GetDraft)</td><td>45</td><td>ArgumentNullException</td><td><span class="tag tag-active">Активно</span></td></tr>
+    <tr><td>3</td><td>Avtocod OperationCanceledException (enrichment)</td><td>113</td><td>Timeout</td><td><span class="tag tag-bg">Фон</span></td></tr>
+    <tr><td>4</td><td>Energogarant SocketException (connection forcibly closed)</td><td>29</td><td>SocketException</td><td><span class="tag tag-bg">Фон</span></td></tr>
+    <tr><td>5</td><td>SQL Timeout (БД не успевает под нагрузкой)</td><td>50</td><td>Win32Exception (258)</td><td><span class="tag tag-bg">Нагрузка</span></td></tr>
+    <tr><td>6</td><td>AbsolutPaymentStatus NullRef (нет PartnerInsurerSettings)</td><td>36</td><td>NullReferenceException</td><td><span class="tag tag-bg">Фон</span></td></tr>
+    <tr><td>7</td><td>State Machine Race Condition (Authorized → Filled)</td><td>—</td><td>InvalidOperationException</td><td><span class="tag tag-bg">Фон</span></td></tr>
+    <tr><td>8</td><td>Ингосстрах кросс-оплата NullRef</td><td>7</td><td>NullReferenceException</td><td><span class="tag tag-bg">Фон</span></td></tr>
+    <tr><td>9</td><td>Тинькофф NullRef</td><td>4</td><td>NullReferenceException</td><td><span class="tag tag-bg">Фон</span></td></tr>
+</table>
+</div>
+
+<!-- ============================================ -->
+<h2>7. Устойчивые проблемы (не связаны с Чёрной пятницей)</h2>
+
+<div class="section">
+<ul style="margin-left: 20px; font-size: 0.9em;">
+    <li>AbsolutPaymentStatus NullRef (~3/час) — нет настроек PartnerInsurerSettings</li>
+    <li>AlfaKaskoIntegration.GetDraft NotImplementedException — метод не реализован</li>
+    <li>AstroVolga GetDraft NotSupportedException — метод не реализован</li>
+    <li>ВСК 401 для другого партнёра (INSAPP_ALFA_BANK_MLM) — 3 523 запроса с невалидными credentials</li>
+</ul>
+</div>
+
+<!-- ============================================ -->
+<h2>8. Верификация с отчётами коллег</h2>
+
+<div class="section">
+<h3>Отчёт #1: InitOsagoDirectPayment (кросс-продажа)</h3>
+<table>
+    <tr><th>Метрика</th><th>Коллега (~11:45)</th><th>Мои данные (~12:30)</th><th>Статус</th></tr>
+    <tr><td>Кросс success (status=2)</td><td>646</td><td>709</td><td>OK (разница = время)</td></tr>
+    <tr><td>Кросс error (status=3)</td><td>62</td><td>63</td><td>OK</td></tr>
+    <tr><td>HTTP уровень</td><td>Все 200 OK</td><td>Все 200 OK</td><td>ПОДТВЕРЖДЕНО</td></tr>
+    <tr><td>Ингосстрах «Изменилась премия»</td><td>112</td><td>137</td><td>ПОДТВЕРЖДЕНО</td></tr>
+</table>
+
+<h3>Отчёт #2: ВСК DirectPayment ошибки (без кросса)</h3>
+<table>
+    <tr><th>Метрика</th><th>Коллега</th><th>Мои данные</th><th>Статус</th></tr>
+    <tr><td>ВСК quote rejections</td><td>7 221</td><td>7 081</td><td>ПОДТВЕРЖДЕНО</td></tr>
+    <tr><td>ВСК KBM ошибки</td><td>1 222</td><td>1 259</td><td>ПОДТВЕРЖДЕНО</td></tr>
+    <tr><td>ВСК DirectPayment errors</td><td>341</td><td>367</td><td>ПОДТВЕРЖДЕНО</td></tr>
+    <tr><td>ВСК «дата документа»</td><td>289</td><td>194 (АБ) / ~289 все</td><td>ПОДТВЕРЖДЕНО</td></tr>
+    <tr><td>All СК DirectPayment</td><td>852</td><td>919</td><td>ПОДТВЕРЖДЕНО (+67 = время)</td></tr>
+</table>
+</div>
+
+<div class="footer">
+    Сформировано: 24.04.2026 | Данные: InsappCoreProd + InsappLogProd | Партнёр: Альфа-Банк (API ключ 31eaf384...)
+</div>
+
+</div>
+
+<script>
+function toggleSection(id) {
+    var el = document.getElementById(id);
+    el.classList.toggle('show');
+    var btn = el.previousElementSibling;
+    btn.textContent = el.classList.contains('show') ? '▼ ' + btn.textContent.substring(2) : '▶ ' + btn.textContent.substring(2);
+}
+</script>
+</body>
+</html>

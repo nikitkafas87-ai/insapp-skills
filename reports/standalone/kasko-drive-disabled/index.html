@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>КАСКО Драйв (Т-СТРАХОВАНИЕ) — выключенные у партнёров</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 20px; background: #f5f5f5; color: #333; }
+h1 { font-size: 1.4em; }
+h2 { font-size: 1.1em; color: #666; font-weight: normal; }
+.summary { background: #fff3cd; border: 1px solid #ffc107; padding: 12px 16px; border-radius: 6px; margin: 16px 0; font-size: 0.95em; }
+table { border-collapse: collapse; width: 100%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 6px; overflow: hidden; }
+th { background: #2c3e50; color: #fff; padding: 10px 12px; text-align: left; font-size: 0.85em; white-space: nowrap; }
+td { padding: 8px 12px; border-bottom: 1px solid #eee; font-size: 0.85em; }
+tr:hover { background: #f8f9fa; }
+td:nth-child(3) { font-family: monospace; font-size: 0.8em; color: #555; word-break: break-all; }
+.off { background: #f8d7da; color: #721c24; font-weight: 600; text-align: center; border-radius: 3px; padding: 2px 6px; }
+.on { background: #d4edda; color: #155724; font-weight: 600; text-align: center; border-radius: 3px; padding: 2px 6px; }
+.meta { color: #999; font-size: 0.8em; margin-top: 20px; }
+th.sk { background: #34495e; }
+</style>
+</head>
+<body>
+
+<h1>КАСКО Драйв (Т-СТРАХОВАНИЕ / бывш. Тинькофф)</h1>
+<h2>Партнёры, у которых продукты выключены</h2>
+
+<div class="summary">
+<b>27 API-ключей</b> у <b>24 партнёров</b> — все 3 продукта выключены (IsDisabled = 1)<br>
+СК: АО &laquo;Т-СТРАХОВАНИЕ&raquo; (InsurerId: <code>ee1bcabb-61a0-4137-91b3-6ea23a1a77f4</code>)<br>
+Дата: 2026-04-10 | БД: InsappCoreProd
+</div>
+
+<div class="summary" style="background:#e8f4fd; border-color:#5bc0de;">
+<b>Столбцы &laquo;СК для ОСАГО&raquo; / &laquo;СК для КАСКО&raquo;</b> — показывает, включена ли СК Т-СТРАХОВАНИЕ для данного API-ключа в разрезе типа продукта (ОСАГО / КАСКО).<br>
+Данные из таблицы <code>PartnerInsurerSettings</code>. Если настройки нет &rarr; СК считается <b>включенной</b> (ВКЛ). Если есть запись с <code>IsDisabled=1</code> &rarr; СК <b>выключена</b> (ВЫКЛ).
+</div>
+
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Партнёр</th>
+<th>API-ключ</th>
+<th>Описание ключа</th>
+<th>Драйв Оптимум</th>
+<th>Драйв Угон</th>
+<th>Драйв Угон+</th>
+<th class="sk">СК для ОСАГО</th>
+<th class="sk">СК для КАСКО</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>avto-russia.ru</td><td>553d81c690aa428c800fe9631f806657</td><td>Ключ созданный при заведении партнёра</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>2</td><td>АКБ &laquo;ЭНЕРГОБАНК&raquo; (АО)</td><td>bad0a3349d194d3fb602bcdd1d6dbb01</td><td>Ключ созданный при заведении партнёра</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>3</td><td>А-Клуб - АО Альфа-Банк</td><td>68d0677ead294b9085769365c6f43b72</td><td>А-Клуб</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>4</td><td>АО &laquo;АЛЬФА-БАНК&raquo;</td><td>75586a6b711c4216a0e1815578f25a37</td><td>Для запросов обогащения Автовитрина</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>5</td><td>АО &laquo;АЛЬФА-БАНК&raquo;</td><td>f273ada6ac954e7896cd23b6a10f2e72</td><td>Дополнительный ключ КАСКО</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="off">ВЫКЛ</span></td></tr>
+<tr><td>6</td><td>АО &laquo;АЛЬФА-БАНК&raquo;</td><td>f39e83464af84c08b4dbe233010ab2fa</td><td>Лендинг Автокэш (Alfabankauto)</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>7</td><td>АО &laquo;АЛЬФА-БАНК&raquo; - DSA</td><td>d68af731b5e34d61994cb66c56112430</td><td>Дополнительный ключ Каско</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>8</td><td>АО &laquo;АЛЬФА-БАНК&raquo; - МЛМ</td><td>accbf016a0984d9899286fd48c98e198</td><td>Дополнительный ключ КАСКО</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="off">ВЫКЛ</span></td></tr>
+<tr><td>9</td><td>АО &laquo;АЛЬФА-БАНК&raquo; - Партнёры</td><td>7fb4269ff4ca4bd5a6dc34ae5353e262</td><td>Дополнительный ключ Каско</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="off">ВЫКЛ</span></td></tr>
+<tr><td>10</td><td>АО &laquo;БКС БАНК&raquo;</td><td>ff3926f1d1f0427c9d04c44aa27928f1</td><td>Лендинг БКС Банк</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>11</td><td>Бородич Павел</td><td>53319c083850437784167d3b668db7e0</td><td>Ключ, созданный при заведении партнёра</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>12</td><td>КФ - КОШЕЛЕВА И.</td><td>edc4547d3eef4bb7ad107eafbe69f9f2</td><td>Ключ, созданный при заведении партнёра</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>13</td><td>КФ - РУБЦОВА Е.</td><td>e3a0fbbda1324dca8ea62e650896fca2</td><td>Ключ созданный при заведении партнёра</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>14</td><td>ООО &laquo;АВТОСПОТ&raquo;</td><td>e78f06aed42d43288e535b099c99c004</td><td>Ключ созданный при заведении партнёра</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>15</td><td>ООО &laquo;АГЕНТБРОКЕР&raquo;</td><td>6b49c5981252401d8aecabc05a0ab0fc</td><td>Ключ созданный при заведении партнёра</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>16</td><td>ООО &laquo;БИП.РУ&raquo;</td><td>16ed1717fa0442f7b972e20078dc9992</td><td>Ключ созданный при заведении партнёра</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>17</td><td>ООО &laquo;ГАЗПРОМНЕФТЬ-РЕГИОНАЛЬНЫЕ ПРОДАЖИ&raquo;</td><td>6d31b5825c44425185e7ebe960243f72</td><td>Ключ созданный при заведении партнёра</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>18</td><td>ООО &laquo;КАРБОКСС&raquo;</td><td>af452575ecba4622ae08f9a0cb450bf6</td><td>Ключ для КАСКО</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>19</td><td>ООО &laquo;МБ МАРКЕТПЛЕЙС&raquo;</td><td>6600c0b916274cfda82dfb001e3f6301</td><td>Ключ созданный при заведении партнёра</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>20</td><td>ООО &laquo;МБ МАРКЕТПЛЕЙС&raquo;</td><td>7806d64cfcb74405975c383607d5b2a1</td><td>Ключ созданный при заведении партнёра</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>21</td><td>ООО &laquo;НТВС&raquo;</td><td>a66e80f71311459cb1f07c16a17232f5</td><td>Дополнительный ключ Каско</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>22</td><td>ООО &laquo;СТРАХОВЫЕ ПАРТНЁРЫ&raquo;</td><td>e1772c0da5cb411cba2106a304303942</td><td>Ключ созданный при заведении партнёра</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>23</td><td>ООО &laquo;МК ГРУПП&raquo;</td><td>c0f93b74e9434b168f2571b97a5eef8a</td><td>Ключ созданный при заведении партнёра</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>24</td><td>ООО Авторапорт</td><td>adbb61cef6d14e5db9054349838e0d26</td><td>Дополнительный ключ Каско</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>25</td><td>ООО Сравни.ру Лабс</td><td>9617a6bcdc6843ca8d10f029c037fa25</td><td>Ключ созданный при заведении партнёра</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>26</td><td>ОФИС (Г. ТВЕРЬ)</td><td>8fab8d9cb36a419d8aaa4991e2565dbb</td><td>Ключ созданный при заведении партнёра</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+<tr><td>27</td><td>РУСЭНКАР</td><td>5f9ecbf4291649b194249dc1a1f07d89</td><td>Ключ созданный при заведении партнёра</td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="off">ВЫКЛ</span></td><td><span class="on">ВКЛ</span></td><td><span class="on">ВКЛ</span></td></tr>
+</tbody>
+</table>
+
+<p class="meta">Таблица: PartnerProductSettings | InsurerKaskoProducts | PartnerApiKeys | Partners | PartnerInsurerSettings &mdash; InsappCoreProd | 2026-04-10</p>
+
+</body>
+</html>

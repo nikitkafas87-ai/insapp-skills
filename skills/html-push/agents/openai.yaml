@@ -1,0 +1,7 @@
+interface:
+  display_name: "HTML Push"
+  short_description: "Publish HTML reports to Pages"
+  default_prompt: "Use $html-push to publish this local HTML report to GitHub Pages and verify the public URL."
+policy:
+  allow_implicit_invocation: true
+

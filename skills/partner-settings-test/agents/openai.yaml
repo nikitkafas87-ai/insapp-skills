@@ -1,0 +1,7 @@
+interface:
+  display_name: "Partner Settings Test"
+  short_description: "Test dashboard partner settings"
+  default_prompt: "Use $partner-settings-test to verify this dashboard partner setting through UI, API, DB, and restore checks."
+policy:
+  allow_implicit_invocation: true
+

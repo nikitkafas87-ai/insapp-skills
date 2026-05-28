@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INS-1657 — КАСКО после ОСАГО (БЭК)</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f7; color: #1d1d1f; line-height: 1.6; }
+.container { max-width: 960px; margin: 0 auto; padding: 20px; }
+h1 { font-size: 24px; margin-bottom: 4px; }
+h2 { font-size: 18px; margin: 24px 0 12px; border-bottom: 2px solid #0071e3; padding-bottom: 6px; }
+h3 { font-size: 15px; margin: 16px 0 8px; color: #6e6e73; }
+.meta { color: #6e6e73; font-size: 13px; margin-bottom: 20px; }
+table { width: 100%; border-collapse: collapse; margin: 8px 0 16px; font-size: 14px; }
+th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #e5e5e7; }
+th { background: #fafafa; font-weight: 600; font-size: 13px; color: #6e6e73; text-transform: uppercase; letter-spacing: 0.3px; }
+td { vertical-align: top; }
+.ok { color: #34c759; font-weight: 600; }
+.warn { color: #ff9f0a; font-weight: 600; }
+.fail { color: #ff3b30; font-weight: 600; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+.badge-ok { background: #e8f9ed; color: #248a3d; }
+.badge-warn { background: #fff4e0; color: #c27800; }
+.badge-fail { background: #ffe5e3; color: #d70015; }
+.card { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 12px 0; }
+.stat { background: #f5f5f7; border-radius: 10px; padding: 14px; text-align: center; }
+.stat-value { font-size: 28px; font-weight: 700; }
+.stat-label { font-size: 12px; color: #6e6e73; margin-top: 2px; }
+.detail { background: #f5f5f7; border-radius: 8px; padding: 12px 16px; margin: 8px 0; font-size: 13px; }
+.detail code { background: #e5e5e7; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+.monospace { font-family: 'SF Mono', 'Consolas', monospace; font-size: 12px; }
+.findings-list { list-style: none; padding: 0; }
+.findings-list li { padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+.findings-list li:last-child { border-bottom: none; }
+.footer { text-align: center; color: #6e6e73; font-size: 12px; margin-top: 32px; padding: 16px; }
+.pass { color: #34c759; }
+.case-header { background: #f5f5f7; padding: 8px 12px; border-radius: 6px; margin: 8px 0; font-size: 13px; }
+.case-header code { font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>INS-1657 — Продажа КАСКО после ОСАГО (БЭК)</h1>
+<p class="meta">Проверка БД InsappCoreTest &middot; ApplicationTypeId = 9 &middot; 22.04.2026</p>
+
+<!-- Summary -->
+<div class="card">
+<h2>Общая статистика</h2>
+<div class="summary-grid">
+  <div class="stat"><div class="stat-value">177</div><div class="stat-label">Заявок всего</div></div>
+  <div class="stat"><div class="stat-value" style="color:#34c759">74</div><div class="stat-label">Получено одобрение</div></div>
+  <div class="stat"><div class="stat-value" style="color:#0071e3">68</div><div class="stat-label">Запрос в СК</div></div>
+  <div class="stat"><div class="stat-value" style="color:#ff3b30">23</div><div class="stat-label">Отказ всех СК</div></div>
+  <div class="stat"><div class="stat-value" style="color:#ff9f0a">7</div><div class="stat-label">Анкета заполнена</div></div>
+  <div class="stat"><div class="stat-value" style="color:#34c759">1</div><div class="stat-label">Оплачено (Paid)</div></div>
+</div>
+</div>
+
+<!-- Scenarios -->
+<div class="card">
+<h2>Покрытие сценариев</h2>
+<table>
+<tr><th>Сценарий</th><th>Кол-во</th><th>Owner=Insured</th><th>Статус</th></tr>
+<tr><td>1 водитель</td><td>98</td><td>Да (97) / Нет (1)</td><td><span class="badge badge-ok">OK</span></td></tr>
+<tr><td>2 водителя</td><td>36</td><td>Да</td><td><span class="badge badge-ok">OK</span></td></tr>
+<tr><td>Без ограничения (мультидрайв)</td><td>32</td><td>Да</td><td><span class="badge badge-ok">OK</span></td></tr>
+<tr><td>3 водителя</td><td>1</td><td>Нет</td><td><span class="badge badge-ok">OK</span></td></tr>
+<tr><td>5 водителей</td><td>8</td><td>Нет</td><td><span class="badge badge-ok">OK</span></td></tr>
+<tr><td>Owner &ne; Insured</td><td>10</td><td>Нет</td><td><span class="badge badge-ok">OK</span></td></tr>
+<tr><td>Полная оплата (Paid)</td><td>1</td><td>Да</td><td><span class="badge badge-ok">OK</span></td></tr>
+</table>
+</div>
+
+<!-- Persons -->
+<div class="card">
+<h2>Перенос персон</h2>
+<p>PersonId совпадают между КАСКО и ОСАГО — персоны <strong>переиспользуются</strong>, а не копируются.</p>
+<table>
+<tr><th>Роль</th><th>КАСКО ID = ОСАГО ID?</th></tr>
+<tr><td>InsuredId (страхователь)</td><td class="ok">Совпадает</td></tr>
+<tr><td>OwnerId (собственник)</td><td class="ok">Совпадает</td></tr>
+<tr><td>Driver1Id &hellip; Driver5Id</td><td class="ok">Совпадают</td></tr>
+</table>
+<div class="detail">
+<strong>Паспортные данные:</strong><br>
+&bull; Страхователь / Собственник: серия, номер, дата выдачи заполнены ✅<br>
+<strong>ВУ:</strong> серия/номер/дата выдачи заполнены у всех водителей ✅<br>
+<strong>MaritalStatusId:</strong> водители: 12 из 188 получили =1 (с 21.04) ✅, страхователь/собственник: =0 (ожидаемо — статус только для водителей)<br>
+<strong>Адреса:</strong> RegistrationAddressID у страхователя/собственника заполнен ✅, у водителей NULL (ОСАГО не собирает)
+</div>
+</div>
+
+<!-- Car -->
+<div class="card">
+<h2>Перенос данных машины</h2>
+<p>CarId <strong>разные</strong> — машина копируется в новую запись (KASKO добавляет свои поля).</p>
+<table>
+<tr><th>Поле</th><th>Результат</th></tr>
+<tr><td>ModelId, ProductionYear, LicensePlate, VIN, CarPower</td><td class="ok">Совпадает с ОСАГО</td></tr>
+<tr><td><strong>Mileage</strong></td><td class="warn">KASKO-only (заполняется)</td></tr>
+<tr><td><strong>Price</strong></td><td class="warn">KASKO-only (заполняется)</td></tr>
+</table>
+</div>
+
+<!-- CarDocuments -->
+<div class="card">
+<h2>CarDocuments — приоритет ОСАГО &gt; TechData</h2>
+<p>Проверено 6 тест-кейсов. ПТС (type=2) и е-ПТС (type=3) — одна категория.</p>
+
+<div class="case-header">
+<strong>Кейс 1:</strong> ОСАГО = СТС &rarr; KASKO = СТС из ОСАГО + е-ПТС из TechData<br>
+ОСАГО: <code>08dea078-1e5b-8a39-bee7-437014008057</code> &middot;
+KASKO: <code>08dea078-459e-fbb9-bee7-437014008616</code>
+</div>
+<table>
+<tr><th>Тип</th><th>Series</th><th>Number</th><th>Источник</th></tr>
+<tr><td>СТС</td><td>9964</td><td>656111</td><td class="ok">из ОСАГО</td></tr>
+<tr><td>е-ПТС</td><td>—</td><td>164301096275481</td><td class="ok">из TechData</td></tr>
+</table>
+
+<div class="case-header">
+<strong>Кейс 2:</strong> ОСАГО = е-ПТС &rarr; KASKO = е-ПТС из ОСАГО + СТС из TechData (TechData е-ПТС проигнорирован: ...471 vs ...481)<br>
+ОСАГО: <code>08dea078-c67e-3e2c-bee7-437014008b9a</code> &middot;
+KASKO: <code>08dea078-f915-1524-bee7-437014008e7d</code>
+</div>
+<table>
+<tr><th>Тип</th><th>Series</th><th>Number</th><th>Источник</th></tr>
+<tr><td>СТС</td><td>9986</td><td>668051</td><td class="ok">из TechData</td></tr>
+<tr><td>е-ПТС</td><td>—</td><td>164301096275471</td><td class="ok">из ОСАГО</td></tr>
+</table>
+
+<div class="case-header">
+<strong>Кейс 3:</strong> ОСАГО = СТС &rarr; KASKO = СТС из ОСАГО + ПТС из TechData<br>
+ОСАГО: <code>08dea07b-4b33-455a-bee7-43701400ad76</code> &middot;
+KASKO: <code>08dea07b-6b41-10d8-bee7-43701400b23a</code>
+</div>
+<table>
+<tr><th>Тип</th><th>Series</th><th>Number</th><th>Источник</th></tr>
+<tr><td>СТС</td><td>9916</td><td>699218</td><td class="ok">из ОСАГО</td></tr>
+<tr><td>ПТС</td><td>40РК</td><td>116987</td><td class="ok">из TechData</td></tr>
+</table>
+
+<div class="case-header">
+<strong>Кейс 4:</strong> ОСАГО = ПТС &rarr; KASKO = ПТС из ОСАГО + СТС из TechData (TechData е-ПТС проигнорирован — ПТС и е-ПТС одна категория)<br>
+ОСАГО: <code>08dea07b-ecc0-c899-bee7-43701400b914</code> &middot;
+KASKO: <code>08dea07c-1def-94b7-bee7-43701400bbe9</code>
+</div>
+<table>
+<tr><th>Тип</th><th>Series</th><th>Number</th><th>Источник</th></tr>
+<tr><td>СТС</td><td>9986</td><td>668051</td><td class="ok">из TechData</td></tr>
+<tr><td>ПТС</td><td>40РК</td><td>116987</td><td class="ok">из ОСАГО</td></tr>
+</table>
+
+<div class="case-header">
+<strong>Кейс 5:</strong> ОСАГО = ПТС &rarr; KASKO = ПТС из ОСАГО + СТС из TechData (TechData ПТС проигнорирован: ...989 vs ...987)<br>
+ОСАГО: <code>08dea07d-4c6b-8460-bee7-436184014f87</code> &middot;
+KASKO: <code>08dea07d-7b48-cf57-bee7-436184015281</code>
+</div>
+<table>
+<tr><th>Тип</th><th>Series</th><th>Number</th><th>Источник</th></tr>
+<tr><td>СТС</td><td>9916</td><td>699218</td><td class="ok">из TechData</td></tr>
+<tr><td>ПТС</td><td>40РК</td><td>116989</td><td class="ok">из ОСАГО</td></tr>
+</table>
+
+<div class="case-header">
+<strong>Кейс 6:</strong> ОСАГО = е-ПТС &rarr; KASKO = е-ПТС из ОСАГО + СТС из TechData (TechData ПТС проигнорирован — ПТС и е-ПТС одна категория)<br>
+ОСАГО: <code>08dea07d-eff8-ff5d-bee7-4361840156cc</code> &middot;
+KASKO: <code>08dea07e-1371-ef98-bee7-43618401599b</code>
+</div>
+<table>
+<tr><th>Тип</th><th>Series</th><th>Number</th><th>Источник</th></tr>
+<tr><td>СТС</td><td>9916</td><td>699218</td><td class="ok">из TechData</td></tr>
+<tr><td>е-ПТС</td><td>—</td><td>164302138440308</td><td class="ok">из ОСАГО</td></tr>
+</table>
+
+<div class="detail">
+<strong>Итог CarDocuments:</strong> 6/6 PASS. Дублей нет. Приоритет ОСАГО &gt; TechData работает корректно.<br>
+Баг <a href="https://tracker.yandex.ru/INS-3249">INS-3249</a> (дублирование е-ПТС) — исправлен, подтверждено.
+</div>
+</div>
+
+<!-- Offers -->
+<div class="card">
+<h2>Офферы от СК</h2>
+<table>
+<tr><th>СК</th><th>Approved</th><th>Rejected</th><th>Failed</th><th>Timeout</th><th>Premium (руб.)</th></tr>
+<tr><td>АО "Т-СТРАХОВАНИЕ"</td><td class="ok">117</td><td>135</td><td>12</td><td>3</td><td>21 000 &hellip; 32 200</td></tr>
+<tr><td>ПАО "РЕНЕССАНС СТРАХОВАНИЕ"</td><td class="ok">56</td><td>—</td><td>8</td><td>—</td><td>—</td></tr>
+<tr><td>СПАО "ИНГОССТРАХ"</td><td class="ok">47</td><td>—</td><td>19</td><td>—</td><td>—</td></tr>
+<tr><td>АО "АЛЬФАСТРАХОВАНИЕ"</td><td class="ok">44</td><td>604</td><td>67</td><td>8</td><td>4 950</td></tr>
+<tr><td>АО "ЗЕТТА СТРАХОВАНИЕ"</td><td class="ok">50</td><td>—</td><td>15</td><td>—</td><td>—</td></tr>
+<tr><td>САО "ВСК"</td><td>—</td><td>2</td><td>8</td><td class="warn">130</td><td>—</td></tr>
+</table>
+<div class="detail">
+<strong>АЛЬФАСТРАХОВАНИЕ</strong> — 9 KASKO-продуктов на заявку. Аппрувит «КАСКО за 3» (4950 руб.).<br>
+604 Rejected — УМНОЕ КАСКО, КАСКО с пробегом, Оптимальное и т.д. (ожидаемо).<br>
+67 Failed — «КАСКО» (ProviderTypeId=2, не поддерживает KaskoFromOsago).<br><br>
+<strong>ВСК</strong> — 130 Timeout из 142. Сервис мок-ВИ, таймауты — ожидаемо для теста.
+</div>
+</div>
+
+<!-- Logs -->
+<div class="card">
+<h2>Логи (BusinessLogs + ErrorLogs)</h2>
+<table>
+<tr><th>Проверка</th><th>Результат</th></tr>
+<tr><td>KASKO в BusinessLogs</td><td class="ok">0 записей (флоу не пишет в BusinessLogs)</td></tr>
+<tr><td>KASKO в ErrorLogs</td><td class="ok">0 ошибок</td></tr>
+<tr><td>ОСАГО в BusinessLogs</td><td>49-53 записи на заявку, стандартные</td></tr>
+<tr><td>ОСАГО в ErrorLogs</td><td class="warn">20 ошибок — сетевые (TimeoutException, SocketException)</td></tr>
+<tr><td>CarDocuments ошибки</td><td class="ok">0 — обогащение работает корректно</td></tr>
+</table>
+</div>
+
+<!-- Findings -->
+<div class="card">
+<h2>Находки и баги</h2>
+<ul class="findings-list">
+<li><span class="ok">ОК</span> OwnerIsInsured=false — работает, 10 заявок, персоны переносятся корректно</li>
+<li><span class="ok">ОК</span> 3 и 5 водителей — заявки создаются и получают одобрение</li>
+<li><span class="ok">ОК</span> CarDocuments — приоритет ОСАГО &gt; TechData подтверждён (6/6 PASS)</li>
+<li><span class="ok">ОК</span> <a href="https://tracker.yandex.ru/INS-3249">INS-3249</a> — дублирование е-ПТС — исправлено</li>
+<li><span class="ok">ОК</span> <a href="https://tracker.yandex.ru/INS-3236">INS-3236</a> — MaritalStatusId проставляется у водителей (12 из 188 с 21.04)</li>
+<li><span class="warn">ОГРАНИЧЕНИЕ</span> Паспорт водителей не переносится — ОСАГО не собирает паспорта водителей</li>
+<li><span class="ok">OK</span> Полный путь оплаты — 1 заявка дошла до Paid, полис выписан</li>
+<li><span class="warn">ЗАДАЧА</span> <a href="https://tracker.yandex.ru/INS-3250">INS-3250</a> — скрыть ApplicationTypeId=9 из таблицы АРМ</li>
+</ul>
+</div>
+
+<!-- Paid Application -->
+<div class="card">
+<h2>Оплаченная заявка (Paid)</h2>
+
+<div class="case-header">
+<strong>KASKO:</strong> <code>08DEA091-7861-2DE0-BEE7-435DAC06EC90</code><br>
+<strong>ОСАГО (родитель):</strong> <code>08DEA091-23E2-7C11-BEE7-435DAC06E5C5</code><br>
+<strong>Created:</strong> 22.04.2026 20:06:18 &middot; <strong>Paid at:</strong> 22.04.2026 20:14:33<br>
+<strong>OwnerIsInsured:</strong> Да &middot; <strong>HasDriversRestriction:</strong> Нет (мультидрайв)
+</div>
+
+<h3>Оплаченный оффер</h3>
+<table>
+<tr><th>СК</th><th>Продукт</th><th>Premium</th><th>PolicyNumber</th><th>Статус</th></tr>
+<tr><td>АО "АЛЬФАСТРАХОВАНИЕ"</td><td>КАСКО за 3</td><td>4 950 руб.</td><td class="monospace">Z6105/046/033138/26</td><td class="ok">Paid</td></tr>
+</table>
+
+<h3>Остальные Approved офферы</h3>
+<table>
+<tr><th>СК</th><th>Premium</th></tr>
+<tr><td>АО "Т-СТРАХОВАНИЕ"</td><td>21 000 / 32 200 / 28 000</td></tr>
+<tr><td>ПАО "РЕНЕССАНС СТРАХОВАНИЕ"</td><td>&mdash;</td></tr>
+</table>
+
+<h3>CarDocuments</h3>
+<table>
+<tr><th>Тип</th><th>Series</th><th>Number</th></tr>
+<tr><td>СТС</td><td>9916</td><td class="monospace">699218</td></tr>
+<tr><td>е-ПТС</td><td>&mdash;</td><td class="monospace">164302138440308</td></tr>
+</table>
+
+<div class="detail">
+<strong>Персона (Insured):</strong> PassportSeries=***10, PassportNumber=***03, RegistrationAddressID заполнен ✅<br>
+<strong>OsagoPaymentLink:</strong> заполнен ✅ &middot; <strong>PolicyNumber:</strong> Z6105/046/033138/26 ✅
+</div>
+</div>
+
+<div class="footer">
+INS-1657 QA Report &middot; InsappCoreTest &middot; 22.04.2026 &middot; 177 заявок &middot; 6/6 CarDocuments PASS &middot; 1 Paid
+</div>
+
+</div>
+</body>
+</html>

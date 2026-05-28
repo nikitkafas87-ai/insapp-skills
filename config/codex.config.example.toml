@@ -1,0 +1,55 @@
+# Sanitized Codex config fragments.
+# Copy the parts you need into %USERPROFILE%\.codex\config.toml.
+# Do not commit real token values.
+
+[mcp_servers.google-sheets]
+command = "C:\\Users\\nikit\\.local\\bin\\uvx.exe"
+args = ["mcp-google-sheets"]
+env = { SERVICE_ACCOUNT_PATH = "C:\\Users\\nikit\\.claude\\google-service-account.json" }
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["@playwright/mcp@latest"]
+
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp"]
+
+[mcp_servers.tracker]
+command = "C:\\Users\\nikit\\.local\\bin\\uvx.exe"
+args = ["--python", "3.12", "yandex-tracker-mcp@latest"]
+env = { TRACKER_ORG_ID = "8168995", TRACKER_TOKEN = "REPLACE_WITH_LOCAL_TRACKER_TOKEN" }
+
+[mcp_servers.tracker-attachments]
+command = "C:\\Users\\nikit\\.local\\bin\\uvx.exe"
+args = [
+  "--python", "3.12",
+  "--with", "mcp",
+  "--with", "httpx",
+  "--with", "truststore",
+  "python",
+  "C:\\Users\\nikit\\.codex\\mcp-servers\\tracker-attachments\\server.py",
+]
+env = { TRACKER_ORG_ID = "8168995", TRACKER_TOKEN = "REPLACE_WITH_LOCAL_TRACKER_TOKEN" }
+
+[mcp_servers.insapp-db]
+url = "https://db-mcp.insapp.pro/mcp"
+env_http_headers = { "x-api-key" = "INSAPP_DB_MCP_API_KEY" }
+startup_timeout_sec = 30
+tool_timeout_sec = 120
+
+[mcp_servers.insapp-db.tools.query]
+approval_mode = "approve"
+
+[mcp_servers.insapp-db.tools.schema]
+approval_mode = "approve"
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+

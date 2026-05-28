@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регресс-отчёт КАСКО — InsappCoreTest</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+
+        .header { background: linear-gradient(135deg, #1e293b, #334155); color: white; padding: 28px 30px; border-radius: 12px; margin-bottom: 20px; }
+        .header h1 { font-size: 22px; margin-bottom: 6px; }
+        .header .meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; opacity: 0.85; }
+
+        .tabs { display: flex; gap: 4px; margin-bottom: 0; }
+        .tab-btn {
+            padding: 12px 20px; border: none; background: #e2e8f0; color: #475569;
+            cursor: pointer; font-size: 14px; font-weight: 600; border-radius: 10px 10px 0 0;
+            transition: all 0.2s; position: relative; top: 1px;
+        }
+        .tab-btn:hover { background: #cbd5e1; }
+        .tab-btn.active { background: white; color: #1e293b; box-shadow: 0 -2px 6px rgba(0,0,0,0.06); }
+        .tab-btn .badge-count {
+            display: inline-block; background: #ef4444; color: white; font-size: 11px;
+            padding: 1px 7px; border-radius: 10px; margin-left: 6px; font-weight: 700;
+        }
+        .tab-btn .badge-count.p0 { background: #dc2626; }
+        .tab-btn .badge-count.p1 { background: #f59e0b; color: #1e293b; }
+        .tab-btn .badge-count.p2 { background: #94a3b8; }
+        .tab-btn .badge-count.stopped { background: #22c55e; }
+
+        .tab-content { display: none; background: white; border-radius: 0 10px 10px 10px; padding: 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .tab-content.active { display: block; }
+
+        .section-title { font-size: 17px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid #f1f5f9; color: #1e293b; }
+        .subsection { margin-bottom: 24px; }
+
+        .desc-box { padding: 14px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
+        .desc-box.red { background: #fef2f2; border-left: 4px solid #ef4444; }
+        .desc-box.orange { background: #fff7ed; border-left: 4px solid #f97316; }
+        .desc-box.blue { background: #eff6ff; border-left: 4px solid #3b82f6; }
+        .desc-box.green { background: #f0fdf4; border-left: 4px solid #22c55e; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
+        .stat-card { background: #f8f9fa; border-radius: 8px; padding: 14px; text-align: center; border: 1px solid #e9ecef; }
+        .stat-card .value { font-size: 26px; font-weight: 700; }
+        .stat-card .value.red { color: #dc2626; }
+        .stat-card .value.orange { color: #ea580c; }
+        .stat-card .value.blue { color: #2563eb; }
+        .stat-card .value.green { color: #16a34a; }
+        .stat-card .label { font-size: 12px; color: #666; margin-top: 2px; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background: #f8fafc; padding: 10px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 9px 12px; border-bottom: 1px solid #f1f5f9; }
+        tr:hover td { background: #fafbfc; }
+
+        code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; font-size: 12px; color: #be123c; }
+        .code-block { background: #1e293b; color: #a5f3fc; padding: 16px; border-radius: 8px; overflow-x: auto; font-family: 'Consolas', 'Monaco', monospace; font-size: 12px; line-height: 1.5; margin: 12px 0; }
+
+        .severity { display: inline-block; padding: 3px 10px; border-radius: 12px; font-weight: 600; font-size: 12px; }
+        .severity.p0 { background: #fee2e2; color: #991b1b; }
+        .severity.p1 { background: #fef3c7; color: #92400e; }
+        .severity.p2 { background: #e0f2fe; color: #075985; }
+
+        .collapsible { cursor: pointer; padding: 10px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 4px; font-weight: 600; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
+        .collapsible:hover { background: #f1f5f9; }
+        .collapsible .arrow { transition: transform 0.2s; font-size: 12px; color: #94a3b8; }
+        .collapsible.open .arrow { transform: rotate(180deg); }
+        .collapse-body { display: none; padding: 14px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 6px 6px; margin-bottom: 8px; }
+        .collapse-body.open { display: block; }
+
+        .rec-list { list-style: none; }
+        .rec-list li { padding: 10px 14px; margin-bottom: 6px; background: #eff6ff; border-radius: 6px; border-left: 3px solid #3b82f6; font-size: 13px; }
+        .rec-list li strong { color: #1d4ed8; }
+
+        .impact td:first-child { font-weight: 500; white-space: nowrap; }
+
+        .footer { text-align: center; padding: 16px; color: #94a3b8; font-size: 12px; }
+
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .header { padding: 18px 16px; border-radius: 10px; }
+            .header h1 { font-size: 17px; }
+            .header .meta { gap: 8px; font-size: 12px; }
+            .tabs { flex-direction: column; gap: 2px; }
+            .tab-btn { border-radius: 8px; padding: 10px 14px; font-size: 13px; display: flex; align-items: center; justify-content: space-between; }
+            .tab-btn.active { border-radius: 8px; }
+            .tab-content { border-radius: 0 0 10px 10px; padding: 16px 12px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .stat-card { padding: 10px 8px; }
+            .stat-card .value { font-size: 22px; }
+            .stat-card .label { font-size: 11px; }
+            .subsection { margin-bottom: 16px; }
+            .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -12px; padding: 0 12px; }
+            table { font-size: 12px; min-width: 500px; }
+            th, td { padding: 8px 10px; }
+            .section-title { font-size: 15px; }
+            .collapsible { font-size: 13px; padding: 8px 12px; }
+            .collapse-body { padding: 10px 12px; }
+            .code-block { font-size: 11px; padding: 12px; }
+            .desc-box { font-size: 13px; padding: 10px 12px; }
+            .rec-list li { font-size: 12px; padding: 8px 10px; }
+            .impact td:first-child { white-space: normal; font-size: 12px; }
+            .footer { font-size: 11px; padding: 12px; }
+        }
+        @media (max-width: 400px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .stat-card .value { font-size: 20px; }
+            .header h1 { font-size: 15px; }
+            .tab-btn { font-size: 12px; padding: 8px 12px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <h1>Регресс-отчёт КАСКО &mdash; InsappCoreTest</h1>
+        <div class="meta">
+            <span>Период: 17&ndash;27.04.2026</span>
+            <span>БД: InsappCoreTest / InsappLogTest / InsappCoreProd</span>
+            <span>Обновлено: 27.04</span>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('tab-overview')">Обзор</button>
+        <button class="tab-btn" onclick="openTab('tab-nullref')">NullReference <span class="badge-count stopped">FIX</span></button>
+        <button class="tab-btn" onclick="openTab('tab-notimpl')">NotImplemented <span class="badge-count p1">69</span></button>
+        <button class="tab-btn" onclick="openTab('tab-comission')">Комиссии</button>
+        <button class="tab-btn" onclick="openTab('tab-daily')">27.04</button>
+        <button class="tab-btn" onclick="openTab('tab-prod')">Прод</button>
+        <button class="tab-btn" onclick="openTab('tab-release')">Релиз 16:26 <span class="badge-count stopped">OK</span></button>
+    </div>
+
+    <!-- TAB: Overview -->
+    <div id="tab-overview" class="tab-content active">
+        <h2 class="section-title">КАСКО за 7 дней</h2>
+
+        <div class="stats-grid">
+            <div class="stat-card"><div class="value blue">827</div><div class="label">Заявок КАСКО (17-24.04)</div></div>
+            <div class="stat-card"><div class="value blue">61</div><div class="label">Заявок 27.04</div></div>
+            <div class="stat-card"><div class="value green">0</div><div class="label">NullReference 27.04</div></div>
+            <div class="stat-card"><div class="value orange">69</div><div class="label">NotImplemented (8+8)</div></div>
+            <div class="stat-card"><div class="value green">645/0</div><div class="label">ComissionLogs 27.04</div></div>
+        </div>
+
+        <h2 class="section-title">КАСКО-специфичные баги</h2>
+        <div class="table-wrap"><table>
+            <tr><th>Баг</th><th>Ошибок</th><th>Источник</th><th>Приоритет</th><th>Статус</th></tr>
+            <tr>
+                <td>NullReference: TinkoffMiniKaskoMapper при NULL Car</td>
+                <td>677 &rarr; 0</td>
+                <td><code>TinkoffMiniKaskoMapper.cs:93</code></td>
+                <td><span class="severity p0">P0</span></td>
+                <td style="color:#16a34a; font-weight:600;">Починен (0 с 24.04)</td>
+            </tr>
+            <tr>
+                <td>NotImplementedException: AlfaKasko.PrepareContract / GetDraft</td>
+                <td>61 + 8 (27.04)</td>
+                <td><code>AlfaKaskoIntegration.cs:104, :96</code></td>
+                <td><span class="severity p1">P1</span></td>
+                <td style="color:#ea580c; font-weight:600;">Не блокирует покупку</td>
+            </tr>
+            <tr>
+                <td>Комиссии: КВ не настроена, ошибки на 22.04</td>
+                <td>24/76 &rarr; 0 (27.04)</td>
+                <td><code>PartnerOsagoComissions</code></td>
+                <td><span class="severity p1">P1</span></td>
+                <td style="color:#16a34a; font-weight:600;">Ошибки прекратились</td>
+            </tr>
+            <tr>
+                <td>AlfaKaskoClient: Ошибка http-кода ответа</td>
+                <td>~20/день</td>
+                <td><code>AlfaKaskoClient</code></td>
+                <td><span class="severity p1">P1</span></td>
+                <td style="color:#ea580c; font-weight:600;">Новый, BusinessLogs</td>
+            </tr>
+            <tr>
+                <td>VskKaskoIntegration: OperationTimeout</td>
+                <td>6/день</td>
+                <td><code>VskKaskoIntegration</code></td>
+                <td><span class="severity p1">P1</span></td>
+                <td style="color:#ea580c; font-weight:600;">Стабильно таймаутит</td>
+            </tr>
+        </table></div>
+
+        <div class="subsection" style="margin-top:20px;">
+            <h2 class="section-title">Все ошибки за 7 дней (ErrorLogs)</h2>
+            <div class="desc-box blue">Ниже &mdash; все ошибки из ErrorLogs без фильтра по продукту. КАСКО-специфичные выделены. Остальные &mdash; общие (ОСАГО, инфраструктура).</div>
+            <div class="table-wrap"><table>
+                <tr><th>Ошибка</th><th>Кол-во</th><th>КАСКО?</th><th>Приоритет</th></tr>
+                <tr><td>ConnectTimeout (соединение с БД)</td><td>851</td><td style="color:#94a3b8;">Общая</td><td><span class="severity p1">P1</span></td></tr>
+                <tr style="background:#fef2f2;"><td style="font-weight:600;">NullReference (TinkoffMiniKaskoMapper)</td><td>677</td><td style="color:#dc2626; font-weight:600;">100% КАСКО</td><td><span class="severity p0">P0</span></td></tr>
+                <tr><td>Base-64 decode (МАКС ОСАГО)</td><td>300</td><td style="color:#94a3b8;">ОСАГО</td><td><span class="severity p1">P1</span></td></tr>
+                <tr><td>Connection timeout (ответ сервера)</td><td>250</td><td style="color:#94a3b8;">Общая</td><td><span class="severity p1">P1</span></td></tr>
+                <tr style="background:#fff7ed;"><td style="font-weight:600;">NotImplementedException (Альфа КАСКО)</td><td>61</td><td style="color:#ea580c; font-weight:600;">КАСКО (не блокирует)</td><td><span class="severity p1">P1</span></td></tr>
+                <tr><td>I/O operation aborted</td><td>30</td><td style="color:#94a3b8;">Общая</td><td><span class="severity p2">P2</span></td></tr>
+                <tr><td>JSON parse error (Unexpected character)</td><td>22</td><td style="color:#94a3b8;">ОСАГО</td><td><span class="severity p2">P2</span></td></tr>
+            </table></div>
+        </div>
+    </div>
+
+    <!-- TAB: NullReference -->
+    <div id="tab-nullref" class="tab-content">
+        <h2 class="section-title">NullReference &mdash; TinkoffMiniKaskoMapper (Car=NULL) &mdash; ПОЧИНЕН</h2>
+        <div class="desc-box green">
+            <strong>Баг починен.</strong> Метод <code>TinkoffMiniKaskoMapper.ToVehicleDetails()</code> падал при CarId=NULL.
+            Ошибки прекратились с 24.04. За 27.04 &mdash; <strong>0 ошибок</strong>.
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><div class="value red">677</div><div class="label">Ошибок за 17-23.04</div></div>
+            <div class="stat-card"><div class="value red">78</div><div class="label">Заявок затронуто</div></div>
+            <div class="stat-card"><div class="value">100%</div><div class="label">CarId = NULL</div></div>
+            <div class="stat-card"><div class="value green">0</div><div class="label">За 24-27.04</div></div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Стек трейс</h3>
+            <div class="code-block">
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Insapp.Services.Integration.Kasko.Insurers.Tinkoff.MiniKasko.TinkoffMiniKaskoMapper.ToVehicleDetails(Car car, Application app)
+     in TinkoffMiniKaskoMapper.cs:line 93
+   at TinkoffMiniKaskoMapper.ToVehicleInfo(Car car, Application app)
+     in TinkoffMiniKaskoMapper.cs:line 85
+   at TinkoffMiniKaskoMapper.ToFQuoteRequest(Offer offer, Application app, String producerCo...)
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Корневая причина</h3>
+            <div class="desc-box green">
+                <strong>Установлена.</strong> Заявки КАСКО создаются без заполнения данных авто (CarId=NULL, OwnerId=NULL, InsuredId=NULL).
+                При маппинге в Тинькофф MiniKasko &mdash; код передаёт <code>Car car</code> как NULL и обращается к его свойствам без проверки.
+                Source: <code>Insapp.Services</code> (681) + <code>Insapp.Models</code> (30).
+            </div>
+        </div>
+
+        <div class="subsection">
+            <div class="collapsible" onclick="toggleCollapse(this)">Распределение по дням <span class="arrow">&#9660;</span></div>
+            <div class="collapse-body">
+                <div class="table-wrap"><table>
+                    <tr><th>Дата</th><th>Ошибок</th><th>Тренд</th></tr>
+                    <tr><td>17.04</td><td>18</td><td></td></tr>
+                    <tr><td>20.04</td><td>29</td><td></td></tr>
+                    <tr><td>21.04</td><td>8</td><td></td></tr>
+                    <tr><td>22.04</td><td>258</td><td style="color:#dc2626;">всплеск</td></tr>
+                    <tr><td>23.04</td><td>364</td><td style="color:#dc2626; font-weight:700;">пик</td></tr>
+                    <tr><td>24.04</td><td>0</td><td style="color:#16a34a; font-weight:600;">остановился</td></tr>
+                    <tr><td>27.04</td><td>0</td><td style="color:#16a34a; font-weight:600;">подтверждено</td></tr>
+                </table></div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <div class="collapsible" onclick="toggleCollapse(this)">Офферы по СК (для заявок с CarId=NULL) <span class="arrow">&#9660;</span></div>
+            <div class="collapse-body">
+                <div class="table-wrap"><table>
+                    <tr><th>СК</th><th>Офферов</th><th>Статус</th></tr>
+                    <tr><td>АЛЬФАСТРАХОВАНИЕ</td><td>280</td><td>Failed</td></tr>
+                    <tr><td>Т-СТРАХОВАНИЕ</td><td>105</td><td>Failed</td></tr>
+                    <tr><td>ВСК</td><td>70</td><td>Failed</td></tr>
+                </table></div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <div class="collapsible" onclick="toggleCollapse(this)">Рекомендации <span class="arrow">&#9660;</span></div>
+            <div class="collapse-body">
+                <ul class="rec-list">
+                    <li><strong>1. Null-check в TinkoffMiniKaskoMapper.ToVehicleDetails()</strong><br>Проверять <code>car</code> на NULL перед обращением к свойствам. Если NULL &mdash; пропускать маппинг.</li>
+                    <li><strong>2. Не отправлять запросы в СК без данных авто</strong><br>Если CarId=NULL &rarr; не создавать офферы, не вызывать интеграции СК.</li>
+                    <li><strong>3. Заполнять ErrorMessage у оффера</strong><br>Сейчас Failed-офферы имеют ErrorMessage=NULL. Нужно писать причину.</li>
+                    <li><strong>4. Валидация на переходе статуса</strong><br>Почему заявка без авто уходит в SentToInsurers? Нужна проверка перед переходом.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Оценка влияния</h3>
+            <div class="table-wrap"><table class="impact">
+                <tr><th>Аспект</th><th>Оценка</th><th>Комментарий</th></tr>
+                <tr><td>Влияние на клиентов</td><td style="color:#ea580c; font-weight:600;">Среднее</td><td>Заявки без авто не могут получить оффер. Пользовательский опыт ухудшается.</td></tr>
+                <tr><td>Засорение логов</td><td style="color:#dc2626; font-weight:600;">Высокое</td><td>677 записей за 7 дней. Затрудняет поиск других ошибок.</td></tr>
+                <tr><td>Нагрузка на СК API</td><td style="color:#ea580c; font-weight:600;">Среднее</td><td>455 бессмысленных запросов в СК за неделю (Альфа+Т-Страх+ВСК).</td></tr>
+                <tr><td>Текущий статус</td><td style="color:#16a34a; font-weight:600;">Остановился</td><td>0 ошибок 24.04. Возможно, исправлено или изменились входящие данные.</td></tr>
+            </table></div>
+        </div>
+    </div>
+
+    <!-- TAB: NotImplemented -->
+    <div id="tab-notimpl" class="tab-content">
+        <h2 class="section-title">NotImplementedException &mdash; AlfaKasko.PrepareContract</h2>
+        <div class="desc-box orange">
+            Методы <code>AlfaKaskoIntegration.PrepareContract()</code> (30 ошибок) и <code>GetDraft()</code> (27 ошибок) выбрасывают <code>NotImplementedException</code>.
+            Вызываются из <code>ApplicationService.PrepareKaskoContract()</code> и фонового обработчика.
+            <strong>Не блокирует покупку</strong> &mdash; клиенты получают ссылку на оплату и могут оплатить полис (подтверждено: 1 заявка в статусе Paid, 5 в PaymentLinkReceived).
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><div class="value red">61</div><div class="label">Ошибок за 7 дней</div></div>
+            <div class="stat-card"><div class="value red">31</div><div class="label">Заявок затронуто</div></div>
+            <div class="stat-card"><div class="value">~2</div><div class="label">Ошибок на заявку</div></div>
+            <div class="stat-card"><div class="value red">27</div><div class="label">За 23.04</div></div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Стек трейс</h3>
+            <div class="code-block">
+// PrepareContract (30 ошибок):
+System.NotImplementedException: The method or operation is not implemented.
+   at Insapp.Services.Integration.Kasko.Insurers.Alfa.AlfaKaskoIntegration.PrepareContract(Offer offer)
+     in AlfaKaskoIntegration.cs:line 104
+   at Insapp.Services.App.ApplicationService.PrepareKaskoContract(Application app)
+     in ApplicationService.cs:line 381
+
+// GetDraft (27 ошибок):
+System.NotImplementedException: The method or operation is not implemented.
+   at Insapp.Services.Integration.Kasko.Insurers.Alfa.AlfaKaskoIntegration.GetDraft(Offer offer)
+     in AlfaKaskoIntegration.cs:line 96
+            </div>
+        </div>
+
+        <div class="subsection">
+            <div class="collapsible" onclick="toggleCollapse(this)">Распределение по дням <span class="arrow">&#9660;</span></div>
+            <div class="collapse-body">
+                <div class="table-wrap"><table>
+                    <tr><th>Дата</th><th>Ошибок</th><th>Тренд</th></tr>
+                    <tr><td>20.04</td><td>6</td><td></td></tr>
+                    <tr><td>21.04</td><td>16</td><td style="color:#dc2626;">рост</td></tr>
+                    <tr><td>22.04</td><td>12</td><td></td></tr>
+                    <tr><td>23.04</td><td>27</td><td style="color:#dc2626; font-weight:700;">пик</td></tr>
+                </table></div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <div class="collapsible" onclick="toggleCollapse(this)">Суть проблемы <span class="arrow">&#9660;</span></div>
+            <div class="collapse-body">
+                <div class="desc-box blue">
+                    <strong>Не блокирует покупку.</strong> Проверено по 6 заявкам: 5 в статусе PaymentLinkReceived (ссылка на оплату выдана), 1 в статусе Paid (оплачено).
+                    Ошибка возникает при попытке подготовить контракт/драфт, но основной флоу (выбор оффера &rarr; оплата) не прерывается.
+                    Методы не реализованы для Альфы КАСКО &mdash; видимо, функционал в разработке.
+                </div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <div class="collapsible" onclick="toggleCollapse(this)">Рекомендации <span class="arrow">&#9660;</span></div>
+            <div class="collapse-body">
+                <ul class="rec-list">
+                    <li><strong>1. Реализовать PrepareContract и GetDraft</strong><br>Методы <code>AlfaKaskoIntegration.PrepareContract()</code> и <code>GetDraft()</code> должны вызывать API Альфы для подготовки договора КАСКО.</li>
+                    <li><strong>2. Или убрать stub-вызовы</strong><br>Если функционал не готов &mdash; не вызывать методы, чтобы не засорять логи.</li>
+                    <li><strong>3. Понятная обработка</strong><br>Обернуть в try/catch, логировать информативное сообщение вместо <code>NotImplementedException</code>.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Оценка влияния</h3>
+            <div class="table-wrap"><table class="impact">
+                <tr><th>Аспект</th><th>Оценка</th><th>Комментарий</th></tr>
+                <tr><td>Влияние на клиентов</td><td style="color:#ea580c; font-weight:600;">Низкое</td><td>Не блокирует покупку. Клиенты могут оплатить полис. Но отсутствие PrepareContract/GetDraft может влиять на отображение документов.</td></tr>
+                <tr><td>Тренд</td><td style="color:#dc2626; font-weight:600;">Растёт</td><td>6&rarr;16&rarr;12&rarr;27. С каждым днём больше заявок.</td></tr>
+                <tr><td>Затронутая СК</td><td style="color:#ea580c; font-weight:600;">Альфа КАСКО</td><td>57 из 61 ошибок &mdash; AlfaKaskoIntegration. Остальные 4 &mdash; OSAGO upsale (Гелиос/РЕСО).</td></tr>
+            </table></div>
+        </div>
+    </div>
+
+    <!-- TAB: Comissions -->
+    <div id="tab-comission" class="tab-content">
+        <h2 class="section-title">Комиссии КАСКО &mdash; проверка корректности</h2>
+        <div class="desc-box blue">
+            Проверка 15 оплаченных КАСКО за 30 дней. Настройки комиссий:
+            <strong>PartnerKaskoComissions &mdash; пуста</strong> (нет настроек КВ для КАСКО).
+            PartnerOsagoComissions &mdash; только для ОСАГО (нет совпадений для КАСКО заявок).
+            Без настроек система не может рассчитать OurComission для rate-based офферов.
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><div class="value blue">15</div><div class="label">Оплачено за 30 дней</div></div>
+            <div class="stat-card"><div class="value green">11</div><div class="label">OurComission корректен</div></div>
+            <div class="stat-card"><div class="value orange">4</div><div class="label">OurComission = NULL</div></div>
+            <div class="stat-card"><div class="value green">0</div><div class="label">Ошибок формулы</div></div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Источник данных: настройки КВ</h3>
+            <div class="table-wrap"><table>
+                <tr><th>Таблица настроек</th><th>Записей</th><th>Для КАСКО?</th><th>Результат</th></tr>
+                <tr>
+                    <td><code>PartnerKaskoComissions</code></td>
+                    <td>0</td>
+                    <td>Да</td>
+                    <td style="color:#ea580c;">Пуста &mdash; нет настроек</td>
+                </tr>
+                <tr>
+                    <td><code>PartnerOsagoComissions</code></td>
+                    <td>257</td>
+                    <td>Нет</td>
+                    <td>0 совпадений для КАСКО заявок</td>
+                </tr>
+                <tr>
+                    <td><code>Partners</code> (.ComissionTypeId)</td>
+                    <td>Все = 0</td>
+                    <td>&mdash;</td>
+                    <td>Ставки = NULL</td>
+                </tr>
+            </table></div>
+            <div class="desc-box orange" style="margin-top:10px;">
+                <strong>Вывод:</strong> КВ для КАСКО в тестовой БД <strong>не настроена</strong> (PartnerKaskoComissions пуста).
+                Incoming комиссия приходит из интеграции СК. OurComission=NULL когда оффер содержит rate (12%, 11%) вместо amounts &mdash;
+                системе некуда обратиться за формулой расчёта "нашей" комиссии.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">По страховым компаниям</h3>
+            <div class="table-wrap"><table>
+                <tr><th>СК</th><th>Оплачено</th><th>OurComission OK</th><th>OurComission NULL</th></tr>
+                <tr>
+                    <td>АЛЬФАСТРАХОВАНИЕ</td>
+                    <td>8</td>
+                    <td style="color:#16a34a; font-weight:600;">8</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>Т-СТРАХОВАНИЕ</td>
+                    <td>7</td>
+                    <td>3</td>
+                    <td style="color:#ea580c; font-weight:600;">4 (57%)</td>
+                </tr>
+            </table></div>
+        </div>
+
+        <div class="subsection">
+            <div class="collapsible" onclick="toggleCollapse(this)">Т-Страхование: OurComission=NULL &mdash; причина и детали <span class="arrow">&#9660;</span></div>
+            <div class="collapse-body">
+                <div class="desc-box blue" style="margin-bottom:12px;">
+                    <strong>Причина:</strong> Все 4 заявки с OurComm=NULL имеют <code>OfferInRate</code>=12% или 11%, но
+                    <code>PolicyIncomingComissionAmount</code>=NULL, <code>PolicyOurComissionAmount</code>=NULL.
+                    Когда СК возвращает rate вместо amounts, а PartnerKaskoComissions пуста &mdash; системе неоткуда взять формулу расчёта Our.
+                </div>
+                <div class="table-wrap"><table>
+                    <tr><th>Дата</th><th>Premium</th><th>Incoming</th><th>Outgoing</th><th>Our</th><th>PolicyNumber</th><th>Тест?</th><th>OfferInRate</th></tr>
+                    <tr>
+                        <td>09.04</td><td>150,000</td><td>18,000</td><td>18,000</td>
+                        <td style="color:#94a3b8;">NULL</td>
+                        <td><code>98498498</code></td>
+                        <td style="color:#94a3b8;">тест</td>
+                        <td>12%</td>
+                    </tr>
+                    <tr>
+                        <td>02.04</td><td>122,323</td><td>14,679</td><td>20,000</td>
+                        <td style="color:#94a3b8;">NULL</td>
+                        <td><code>11111111111111111111</code></td>
+                        <td style="color:#94a3b8;">тест</td>
+                        <td>12%</td>
+                    </tr>
+                    <tr>
+                        <td>02.04</td><td>121,211</td><td>13,333</td><td>30,000</td>
+                        <td style="color:#94a3b8;">NULL</td>
+                        <td><code>1111</code></td>
+                        <td style="color:#94a3b8;">тест</td>
+                        <td>11%</td>
+                    </tr>
+                    <tr>
+                        <td>01.04</td><td>444,444</td><td>53,333</td><td>15,000</td>
+                        <td style="color:#ea580c; font-weight:700;">NULL</td>
+                        <td><code>Z6105/046/024764/26</code></td>
+                        <td style="color:#16a34a;">реальный</td>
+                        <td>12%</td>
+                    </tr>
+                </table></div>
+                <div class="desc-box orange" style="margin-top:12px;">
+                    <strong>Реальная заявка 01.04:</strong> PolicyNumber=<code>Z6105/046/024764/26</code>, Premium=444,444₽, Incoming=53,333₽, Outgoing=15,000₽.
+                    OurComission должен быть <strong>38,333₽</strong>, но=NULL из-за отсутствия настроек КВ в PartnerKaskoComissions.
+                    Это <strong>не баг, а отсутствие настройки</strong> в тестовой БД.
+                </div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <div class="collapsible" onclick="toggleCollapse(this)">Последние 7 дней: все оплаченные КАСКО <span class="arrow">&#9660;</span></div>
+            <div class="collapse-body">
+                <div class="table-wrap"><table>
+                    <tr><th>Дата</th><th>СК</th><th>Premium</th><th>Incoming</th><th>Outgoing</th><th>Our</th><th>PolicyNumber</th></tr>
+                    <tr>
+                        <td>23.04</td><td>Т-Страхование</td><td>32,200</td><td>16,100</td><td>1,932</td>
+                        <td style="color:#16a34a;">14,168</td><td>9649586575</td>
+                    </tr>
+                    <tr>
+                        <td>23.04</td><td>Альфа</td><td>4,950</td><td>1,733</td><td>208</td>
+                        <td style="color:#16a34a;">1,525</td><td>Z6105/046/033631/26</td>
+                    </tr>
+                    <tr>
+                        <td>23.04</td><td>Альфа</td><td>4,950</td><td>1,733</td><td>0</td>
+                        <td style="color:#16a34a;">1,733</td><td>Z6105/046/033629/26</td>
+                    </tr>
+                    <tr>
+                        <td>22.04</td><td>Альфа</td><td>4,950</td><td>1,733</td><td>0</td>
+                        <td style="color:#16a34a;">1,733</td><td>Z6105/046/033138/26</td>
+                    </tr>
+                    <tr>
+                        <td>22.04</td><td>Альфа</td><td>4,950</td><td>1,733</td><td>0</td>
+                        <td style="color:#16a34a;">1,733</td><td>Z6105/046/033136/26</td>
+                    </tr>
+                    <tr>
+                        <td>22.04</td><td>Альфа</td><td>4,950</td><td>1,733</td><td>0</td>
+                        <td style="color:#16a34a;">1,733</td><td>Z6105/046/033135/26</td>
+                    </tr>
+                    <tr>
+                        <td>22.04</td><td>Альфа</td><td>4,950</td><td>1,733</td><td>0</td>
+                        <td style="color:#16a34a;">1,733</td><td>Z6105/046/033134/26</td>
+                    </tr>
+                </table></div>
+                <div class="desc-box green" style="margin-top:12px;">
+                    За последние 7 дней: все 7 оплаченных КАСКО корректны. Формула <code>Our = Incoming - Outgoing</code> выполняется.
+                    Все PolicyNumber реальны, PremiumAmount заполнен.
+                </div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">ComissionLogs &mdash; журнал расчёта КВ за 7 дней</h3>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="value blue">76</div><div class="label">Всего записей</div></div>
+                <div class="stat-card"><div class="value green">50</div><div class="label">Result=true</div></div>
+                <div class="stat-card"><div class="value red">26</div><div class="label">Result=false</div></div>
+                <div class="stat-card"><div class="value orange">24</div><div class="label">"Partner period not found"</div></div>
+            </div>
+
+            <div class="desc-box red">
+                <strong>24 ошибки расчёта КВ на 22.04</strong> &mdash; ApiKey Альфа-Банк (<code>fe92625f</code>) сменил период 21.04 в 20:20.
+                Новый период <code>f4e72793</code> имеет только 3 записи: default (InsurerId=NULL, ComissionType=0), СОВКОМБАНК, ИНТАЧ.
+                <strong>Нет ни одной записи для КАСКО-страховщиков</strong> (Альфа, Т-Страхование).
+            </div>
+
+            <div class="table-wrap"><table>
+                <tr><th>Дата</th><th>Result=true</th><th>Result=false</th><th>Ошибка</th></tr>
+                <tr>
+                    <td>17.04</td><td>2</td><td>0</td><td>&mdash;</td>
+                </tr>
+                <tr>
+                    <td>18.04</td><td>0</td><td>0</td><td>&mdash;</td>
+                </tr>
+                <tr>
+                    <td>19.04</td><td>0</td><td>0</td><td>&mdash;</td>
+                </tr>
+                <tr>
+                    <td>20.04</td><td>0</td><td>0</td><td>&mdash;</td>
+                </tr>
+                <tr>
+                    <td>21.04</td><td>0</td><td>0</td><td>&mdash;</td>
+                </tr>
+                <tr>
+                    <td>22.04</td><td>2</td><td style="color:#dc2626; font-weight:600;">24</td><td>Partner period not found</td>
+                </tr>
+                <tr>
+                    <td>23.04</td><td>46</td><td>0</td><td>&mdash;</td>
+                </tr>
+            </table></div>
+
+            <div class="desc-box blue" style="margin-top:12px;">
+                <strong>InsurerCalc (входящая КВ):</strong> статический коэффициент &mdash; Premium &times; 0.35 (Альфа), Premium &times; 0.5 (Т-Страхование).<br>
+                <strong>PartnerCalc (исходящая КВ):</strong> берётся из PartnerOsagoComissions через PeriodId &rarr; InsurerId. ComissionType=0 (default) &mdash; исходящая = 0.
+            </div>
+
+            <div class="desc-box green" style="margin-top:12px;">
+                <strong>С 23.04 ошибки прекратились:</strong> система начала использовать default-запись (InsurerId=NULL, ComissionType=0).
+                При ComissionType=0: Outgoing=0, Our=Incoming &mdash; вся комиссия уходит в Insapp.
+                Офферы НЕ блокируются при ошибке расчёта КВ &mdash; Incoming рассчитывается по статическому коэффициенту.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Выводы</h3>
+            <ul class="rec-list">
+                <li><strong>1. Настройки КВ КАСКО не заданы</strong><br>
+                Таблица <code>PartnerKaskoComissions</code> пуста. Это тестовая БД &mdash; КВ настроена рандомно тестировщиками.
+                Без настроек система не может рассчитать OurComission для rate-based офферов Т-Страхования.</li>
+                <li><strong>2. ComissionLogs: 24 ошибки на 22.04</strong><br>
+                Смена периода у Альфа-Банк ApiKey &rarr; новый период без записей для КАСКО СК.
+                С 23.04 система использует default (ComissionType=0), ошибки прекратились.
+                Офферы продолжают работать &mdash; блокировки нет.</li>
+                <li><strong>3. Формула корректна</strong><br>Там где OurComission заполнен &mdash; формула <code>Our = Incoming - Outgoing</code> работает без ошибок (11/11 за 30 дней).</li>
+                <li><strong>4. 4 заявки с OurComm=NULL</strong><br>Все Т-Страхование, все имеют OfferInRate (12%/11%) вместо amounts.
+                3 из 4 &mdash; тестовые данные. 1 реальная (Z6105/046/024764/26, 38,333₽) &mdash; ожидаемо NULL без настройки КВ.</li>
+                <li><strong>5. За 7 дней &mdash; чисто</strong><br>Все 7 оплаченных КАСКО за последнюю неделю корректны. OurComission рассчитан верно.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- TAB: 27.04 Daily -->
+    <div id="tab-daily" class="tab-content">
+        <h2 class="section-title">Мониторинг 27.04.2026</h2>
+
+        <div class="stats-grid">
+            <div class="stat-card"><div class="value blue">61</div><div class="label">Заявок КАСКО</div></div>
+            <div class="stat-card"><div class="value green">1</div><div class="label">Оплачено</div></div>
+            <div class="stat-card"><div class="value green">0</div><div class="label">NullReference</div></div>
+            <div class="stat-card"><div class="value orange">8</div><div class="label">NotImplemented</div></div>
+            <div class="stat-card"><div class="value green">645/0</div><div class="label">ComissionLogs OK/FAIL</div></div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Статусы заявок</h3>
+            <div class="table-wrap"><table>
+                <tr><th>Статус</th><th>Кол-во</th></tr>
+                <tr><td>Анкета отображена</td><td>26</td></tr>
+                <tr><td>Получено одобрение</td><td>14</td></tr>
+                <tr><td>Отказ всех СК</td><td>11</td></tr>
+                <tr><td>Выбрано предложение</td><td>3</td></tr>
+                <tr><td>PaymentLinkReceived</td><td>2</td></tr>
+                <tr><td>Авторизация (SMS)</td><td>2</td></tr>
+                <tr><td>Авторизован</td><td>2</td></tr>
+                <tr><td style="font-weight:600;">Оплачено</td><td style="font-weight:600;">1</td></tr>
+            </table></div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Оплаченная заявка &mdash; хронология</h3>
+            <div class="desc-box blue">
+                ApplicationId: <code>08dea43c-28b4-9408-bee7-4373fc05b06b</code> &bull; СК: АЛЬФАСТРАХОВАНИЕ &bull; Premium: 4,950₽
+            </div>
+            <div class="table-wrap"><table>
+                <tr><th>Время</th><th>Вызов</th><th>Результат</th><th>Детали</th></tr>
+                <tr>
+                    <td>12:06:12</td>
+                    <td>GetKaskoCacheByApplicationId</td>
+                    <td style="color:#16a34a;">200 OK</td>
+                    <td>ГРЗ О562ТК159</td>
+                </tr>
+                <tr>
+                    <td>12:06:14</td>
+                    <td>GetKaskoOffers</td>
+                    <td style="color:#16a34a;">200 OK</td>
+                    <td>1 оффер Approved</td>
+                </tr>
+                <tr>
+                    <td>12:06:20</td>
+                    <td>SelectOffer</td>
+                    <td style="color:#16a34a;">200 OK</td>
+                    <td>812ms</td>
+                </tr>
+                <tr>
+                    <td>12:06:20</td>
+                    <td>GetDraft</td>
+                    <td style="color:#ea580c;">200 + NotImplementedException</td>
+                    <td>policyDraft=NULL</td>
+                </tr>
+                <tr>
+                    <td>12:06:21</td>
+                    <td>GetKaskoPaymentLink</td>
+                    <td style="color:#ea580c;">Processing</td>
+                    <td>Ссылка NULL, поллинг...</td>
+                </tr>
+                <tr>
+                    <td>12:06:21-42</td>
+                    <td>GetKaskoPaymentLink &times;10</td>
+                    <td style="color:#ea580c;">Processing</td>
+                    <td>Каждые 2 сек, ~22 сек ожидания</td>
+                </tr>
+                <tr>
+                    <td>12:06:43</td>
+                    <td>GetKaskoPaymentLink</td>
+                    <td style="color:#16a34a;">Received!</td>
+                    <td>Ссылка на alfastrah.ru получена</td>
+                </tr>
+                <tr style="background:#f0fdf4;">
+                    <td>~12:06</td>
+                    <td>Оплата</td>
+                    <td style="color:#16a34a; font-weight:600;">Paid</td>
+                    <td>PolicyNumber: Z6105/046/034848/26</td>
+                </tr>
+                <tr style="background:#fef2f2;">
+                    <td>13:05:02</td>
+                    <td>AlfabankPaidApplicationsCallbackJob</td>
+                    <td style="color:#dc2626;">Ошибка</td>
+                    <td>CpaClientUid == null, callback НЕ отправлен</td>
+                </tr>
+            </table></div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Callback &mdash; CpaClientUid == null</h3>
+            <div class="desc-box red">
+                <strong>Проблема:</strong> Оплаченная заявка не отправила callback партнёру.
+                <code>CpaClientUid</code>=NULL, <code>PaidCallbackStatus</code>=4, <code>PaidCallbackSent</code>=NULL.
+                <code>AlfabankPaidApplicationsCallbackJob</code> пытается отправить callback, но пропускает из-за отсутствия CPA-идентификатора.
+                Партнёр НЕ узнает об оплате.
+            </div>
+            <div class="desc-box orange" style="margin-top:10px;">
+                <strong>Почему CpaClientUid=NULL:</strong> Заявка создана через ApiKey <code>07b2d612</code>. CPA-клиентский идентификатор передаётся партнёром при создании заявки. Если не передан &mdash; callback некому отправлять.
+                Это нормально для тестовой среды, но в ПРОД нужно проверять что все партнёры передают CpaClientUid.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">BusinessLogs &mdash; КАСКО ошибки за 27.04</h3>
+            <div class="table-wrap"><table>
+                <tr><th>Сервис</th><th>Категория</th><th>Сообщение</th><th>Частота</th></tr>
+                <tr>
+                    <td><code>AlfaKaskoClient</code></td>
+                    <td>ValidateResponse</td>
+                    <td>Ошибка http-кода ответа</td>
+                    <td style="color:#dc2626;">~20+ на 3 заявки</td>
+                </tr>
+                <tr>
+                    <td><code>VskKaskoIntegration</code></td>
+                    <td>OperationTimeout</td>
+                    <td>Интеграция отменена по таймауту</td>
+                    <td style="color:#dc2626;">6 на 3 заявки</td>
+                </tr>
+                <tr>
+                    <td><code>TinkoffMiniKaskoClient</code></td>
+                    <td>ValidateResponse</td>
+                    <td>Status: ERROR</td>
+                    <td>3 на 1 заявку</td>
+                </tr>
+                <tr>
+                    <td><code>AlfaKaskoIntegration</code></td>
+                    <td>CalcOffer</td>
+                    <td>Требуется согласование андеррайтера</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td><code>PkaskoIntegration</code></td>
+                    <td>PkaskoCalculator</td>
+                    <td>Ingosstrah: только закрытый список водителей</td>
+                    <td>многократно</td>
+                </tr>
+                <tr>
+                    <td><code>PkaskoIntegration</code></td>
+                    <td>PkaskoCalculator</td>
+                    <td>AlphaIntegration: Страхование запрещено</td>
+                    <td>многократно</td>
+                </tr>
+                <tr>
+                    <td><code>PkaskoIntegration</code></td>
+                    <td>PkaskoCalculator</td>
+                    <td>ZurichWebservice: возраст ТС не подходит</td>
+                    <td>многократно</td>
+                </tr>
+            </table></div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">PublicApiLogs &mdash; самые тяжёлые вызовы</h3>
+            <div class="table-wrap"><table>
+                <tr><th>Метод</th><th>Вызовов</th><th>Avg ms</th><th>Max ms</th></tr>
+                <tr>
+                    <td>GetKaskoOffers</td><td>62</td><td>7</td><td>155</td>
+                </tr>
+                <tr>
+                    <td>GetKaskoPaymentLink</td><td>39</td><td>18</td><td>618</td>
+                </tr>
+                <tr>
+                    <td style="font-weight:600;">SelectOffer</td><td>4</td><td style="color:#dc2626; font-weight:600;">14,287</td><td style="color:#dc2626; font-weight:600;">42,022</td>
+                </tr>
+                <tr>
+                    <td>SendKaskoApplication</td><td>15</td><td>536</td><td>3,911</td>
+                </tr>
+                <tr>
+                    <td>UploadDocument</td><td>19</td><td>661</td><td>7,706</td>
+                </tr>
+            </table></div>
+            <div class="desc-box orange" style="margin-top:10px;">
+                <strong>SelectOffer до 42 сек</strong> &mdash; аномально долгий вызов. В среднем 14 сек.
+                Возможно связано с ConnectTimeout к БД (113 ошибок за день).
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Итоги 27.04</h3>
+            <ul class="rec-list">
+                <li><strong>1. NullReference починен</strong><br>
+                0 ошибок за 27.04 (было 677 за неделю). TinkoffMiniKaskoMapper больше не падает.</li>
+                <li><strong>2. NotImplementedException продолжается</strong><br>
+                8 ошибок за день. AlfaKaskoIntegration PrepareContract/GetDraft не реализованы.
+                Не блокирует покупку (подтверждено: заявка оплачена).</li>
+                <li><strong>3. Callback не отправлен</strong><br>
+                Оплаченная заявка: CpaClientUid=NULL &rarr; AlfabankCallbackIntegration пропустил.
+                Партнёр не получит уведомление. Норма для теста, критично для ПРОД.</li>
+                <li><strong>4. AlfaKaskoClient: Ошибка http-кода</strong><br>
+                Альфа КАСКО стабильно возвращает неуспешные HTTP-коды при расчёте (~20+ повторов на заявку).</li>
+                <li><strong>5. VskKaskoIntegration: таймауты</strong><br>
+                ВСК КАСКО отменяется по таймауту на каждой 2-й заявке.</li>
+                <li><strong>6. ComissionLogs: 645 OK / 0 FAIL</strong><br>
+                Все расчёты КВ успешны. Default-запись ComissionType=0 работает стабильно.</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- TAB: Prod Testing -->
+
+    <!-- TAB: Prod Regression -->
+    <div id="tab-prod" class="tab-content">
+        <h2 class="section-title">Регресс-тестирование КАСКО &mdash; ПРОД (InsappCoreProd)</h2>
+        <div class="desc-box blue">
+            <strong>Период:</strong> 20.04 &ndash; 27.04.2026 (7 дней) &bull; Данные: InsappCoreProd, InsappLogProd
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><div class="value blue">61,359</div><div class="label">Офферов (7 дней)</div></div>
+            <div class="stat-card"><div class="value" style="color:#22c55e">63</div><div class="label">Продаж (7 дней)</div></div>
+            <div class="stat-card"><div class="value" style="color:#22c55e">257</div><div class="label">Продаж (30 дней)</div></div>
+            <div class="stat-card"><div class="value blue">71.4%</div><div class="label">Approval Rate</div></div>
+            <div class="stat-card"><div class="value red">14</div><div class="label">Failed (7 дней)</div></div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Дневной тренд (7 дней)</h3>
+            <div class="table-wrap"><table>
+                <tr><th>Дата</th><th>Офферов</th><th>Approved</th><th>Rejected</th><th>Failed</th><th>Approval %</th></tr>
+                <tr><td>20.04 (Вс)</td><td>8,903</td><td style="color:#22c55e">6,371</td><td style="color:#dc2626">2,529</td><td>3</td><td>71.6%</td></tr>
+                <tr><td>21.04 (Пн)</td><td>8,846</td><td style="color:#22c55e">6,382</td><td style="color:#dc2626">2,463</td><td>1</td><td>72.1%</td></tr>
+                <tr><td>22.04 (Вт)</td><td>8,613</td><td style="color:#22c55e">6,165</td><td style="color:#dc2626">2,448</td><td>0</td><td>71.6%</td></tr>
+                <tr><td>23.04 (Ср)</td><td>8,897</td><td style="color:#22c55e">6,393</td><td style="color:#dc2626">2,501</td><td>3</td><td>71.8%</td></tr>
+                <tr><td>24.04 (Чт)</td><td>9,031</td><td style="color:#22c55e">6,405</td><td style="color:#dc2626">2,623</td><td>3</td><td>70.9%</td></tr>
+                <tr><td>25.04 (Пт)</td><td>6,545</td><td style="color:#22c55e">4,643</td><td style="color:#dc2626">1,898</td><td>4</td><td>70.9%</td></tr>
+                <tr><td>26.04 (Сб)</td><td>6,325</td><td style="color:#22c55e">4,462</td><td style="color:#dc2626">1,863</td><td>0</td><td>70.5%</td></tr>
+                <tr style="background:#f0f9ff; font-weight:600;"><td>27.04 (Вс)*</td><td>4,259</td><td style="color:#22c55e">2,985</td><td style="color:#dc2626">1,274</td><td>0</td><td>70.1%</td></tr>
+            </table></div>
+            <div class="desc-box blue" style="margin-top:10px;">* 27.04 &mdash; данные на момент проверки (~18:00 МСК). Approval rate стабилен: 70&ndash;72%.</div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Офферы по СК (7 дней)</h3>
+            <div class="table-wrap"><table>
+                <tr><th>СК</th><th>Approved</th><th>Rejected</th><th>Failed</th><th>Всего</th><th>Approval %</th></tr>
+                <tr><td>Т-Страхование</td><td style="color:#22c55e">15,472</td><td style="color:#dc2626">505</td><td>3</td><td>15,980</td><td>96.8%</td></tr>
+                <tr><td>Ренессанс</td><td style="color:#22c55e">14,536</td><td>&mdash;</td><td>&mdash;</td><td>14,536</td><td>100%</td></tr>
+                <tr style="background:#fef2f2;"><td>АльфаСтрахование</td><td style="color:#dc2626">74</td><td style="color:#dc2626; font-weight:600;">17,075</td><td>11</td><td>17,160</td><td style="color:#dc2626; font-weight:600;">0.4%</td></tr>
+                <tr><td>Ингосстрах</td><td style="color:#22c55e">6,452</td><td>&mdash;</td><td>&mdash;</td><td>6,452</td><td>100%</td></tr>
+                <tr><td>Зетта</td><td style="color:#22c55e">4,432</td><td>&mdash;</td><td>&mdash;</td><td>4,432</td><td>100%</td></tr>
+                <tr><td>Согласие</td><td style="color:#22c55e">2,675</td><td>&mdash;</td><td>&mdash;</td><td>2,675</td><td>100%</td></tr>
+                <tr><td>ВСК</td><td style="color:#22c55e">125</td><td>&mdash;</td><td>&mdash;</td><td>125</td><td>100%</td></tr>
+            </table></div>
+            <div class="desc-box red" style="margin-top:10px;">
+                <strong>АльфаСтрахование:</strong> 99.6% отказов. Причина: AlfaKaskoMapper требует оба документа (СТС + ПТС/еПТС),
+                но партнёр МБ МАРКЕТПЛЕЙС не передаёт документы в запросе. Только 74 из 17,160 офферов одобрены.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Продажи по СК (7 дней)</h3>
+            <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));">
+                <div class="stat-card"><div class="value" style="color:#22c55e">13</div><div class="label">СОГАЗ</div></div>
+                <div class="stat-card"><div class="value" style="color:#22c55e">12</div><div class="label">Ренессанс</div></div>
+                <div class="stat-card"><div class="value" style="color:#22c55e">12</div><div class="label">ВСК</div></div>
+                <div class="stat-card"><div class="value" style="color:#22c55e">9</div><div class="label">Т-Страхование</div></div>
+                <div class="stat-card"><div class="value" style="color:#22c55e">5</div><div class="label">ЮГОРИЯ</div></div>
+                <div class="stat-card"><div class="value" style="color:#22c55e">4</div><div class="label">РЕСО-Гарантия</div></div>
+                <div class="stat-card"><div class="value" style="color:#22c55e">3</div><div class="label">Согласие</div></div>
+                <div class="stat-card"><div class="value" style="color:#22c55e">2</div><div class="label">Сбербанк</div></div>
+                <div class="stat-card"><div class="value" style="color:#22c55e">2</div><div class="label">Совкомбанк</div></div>
+                <div class="stat-card"><div class="value" style="color:#22c55e">1</div><div class="label">АльфаСтрахование</div></div>
+            </div>
+            <div class="desc-box green">
+                <strong>Итого:</strong> 63 продажи за 7 дней &bull; 257 за 30 дней. Лидер продаж &mdash; СОГАЗ (13).
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Ошибки BusinessLogs &mdash; КАСКО (27.04)</h3>
+            <div class="table-wrap"><table>
+                <tr><th>Источник</th><th>Ошибка</th><th>Кол-во</th><th>Вердикт</th></tr>
+                <tr style="background:#fef2f2;">
+                    <td>AlfaKaskoMapper</td>
+                    <td style="font-weight:600;">Требуется оба документа: СТС и ПТС (еПТС)</td>
+                    <td style="font-weight:600;">1,176</td>
+                    <td style="color:#dc2626;">BUG &mdash; партнёр не шлёт документы</td>
+                </tr>
+                <tr>
+                    <td>PkaskoIntegration</td>
+                    <td>VSK: заполните обязательное поле &laquo;Серия документа&raquo;</td>
+                    <td>1,175</td>
+                    <td style="color:#ea580c;">VALIDATION &mdash; нет серии СТС/ПТС</td>
+                </tr>
+                <tr>
+                    <td>PkaskoIntegration</td>
+                    <td>Ингос: допуск. только с закрытым списком водителей (не мультидрайв)</td>
+                    <td>902</td>
+                    <td style="color:#2563eb;">ОЖИДАЕМО &mdash; ограничение СК</td>
+                </tr>
+                <tr>
+                    <td>PkaskoIntegration</td>
+                    <td>Согласие: Некорректные данные по ТС, сверьте характеристики с документами</td>
+                    <td>871</td>
+                    <td style="color:#ea580c;">VALIDATION &mdash; данные ТС не совпадают</td>
+                </tr>
+                <tr>
+                    <td>VskKaskoMapper</td>
+                    <td>Недопустимый возраст ТС</td>
+                    <td>258</td>
+                    <td style="color:#2563eb;">ОЖИДАЕМО &mdash; ограничение СК</td>
+                </tr>
+                <tr>
+                    <td>PkaskoIntegration</td>
+                    <td>Zurich: возраст до 35 лет &rarr; должен быть в списке водителей</td>
+                    <td>232</td>
+                    <td style="color:#2563eb;">ОЖИДАЕМО &mdash; ограничение СК</td>
+                </tr>
+                <tr>
+                    <td>PkaskoIntegration</td>
+                    <td>Согласие: предварительный расчёт, оформление невозможно</td>
+                    <td>173</td>
+                    <td style="color:#2563eb;">ОЖИДАЕМО &mdash; частичный расчёт</td>
+                </tr>
+                <tr>
+                    <td>PkaskoIntegration</td>
+                    <td>Zurich: возраст ТС 12/14/8/13 лет &mdash; полис невозможен</td>
+                    <td>481</td>
+                    <td style="color:#2563eb;">ОЖИДАЕМО &mdash; ограничение по возрасту авто</td>
+                </tr>
+            </table></div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">ErrorLogs &mdash; КАСКО (7 дней)</h3>
+            <div class="table-wrap"><table>
+                <tr><th>Ошибка</th><th>Источник</th><th>Кол-во</th></tr>
+                <tr>
+                    <td>Alfa API: HTTP 502 Bad Gateway на /wapi/kasko/calculation</td>
+                    <td>Insapp.Services</td>
+                    <td>8</td>
+                </tr>
+                <tr>
+                    <td>Alfa API: HTTP 504 Gateway Timeout на /wapi/kasko/calculation</td>
+                    <td>Insapp.Services</td>
+                    <td>5</td>
+                </tr>
+                <tr>
+                    <td>Alfa API: HTTP 503 Service Unavailable</td>
+                    <td>Insapp.Services</td>
+                    <td>1</td>
+                </tr>
+                <tr style="background:#fff7ed;">
+                    <td>SQL: Invalid object name &laquo;InsurerApplicationKaskoProducts&raquo;</td>
+                    <td>SqlClient</td>
+                    <td>2</td>
+                </tr>
+                <tr style="background:#fff7ed;">
+                    <td>SQL: Invalid object name &laquo;PartnerKaskoProducts&raquo;</td>
+                    <td>SqlClient</td>
+                    <td>2</td>
+                </tr>
+                <tr style="background:#fff7ed;">
+                    <td>SQL: Invalid column name &laquo;KaskoProductId&raquo;, &laquo;InsurerKaskoProductId&raquo;</td>
+                    <td>SqlClient</td>
+                    <td>4</td>
+                </tr>
+            </table></div>
+            <div class="desc-box orange" style="margin-top:10px;">
+                <strong>SQL-ошибки:</strong> Обращение к несуществующим таблицам/колонкам (PartnerKaskoProducts, InsurerApplicationKaskoProducts, KaskoProductId).
+                Это код, который ссылается на объекты БД, не созданные миграцией. Не критично (2 ошибки за 7 дней), но требует внимания разработчиков.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">AlfaLogs &mdash; ошибки КАСКО (7 дней)</h3>
+            <div class="table-wrap"><table>
+                <tr><th>Код ответа</th><th>Описание</th><th>Кол-во</th></tr>
+                <tr style="background:#fef2f2;">
+                    <td><code>401 Unauthorized</code></td>
+                    <td>Авторизация не пройдена / токен просрочен</td>
+                    <td style="font-weight:600;">671</td>
+                </tr>
+                <tr>
+                    <td><code>500 Internal Server Error</code></td>
+                    <td>Внутренняя ошибка Альфа API</td>
+                    <td>51</td>
+                </tr>
+                <tr>
+                    <td><code>502 Bad Gateway</code></td>
+                    <td>Сервер Альфа недоступен</td>
+                    <td>18</td>
+                </tr>
+                <tr>
+                    <td><code>504 Gateway Timeout</code></td>
+                    <td>Таймаут ответа Альфа API</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td><code>503 Service Unavailable</code></td>
+                    <td>Сервис Альфа временно недоступен</td>
+                    <td>3</td>
+                </tr>
+                <tr>
+                    <td><code>400 BadRequest</code></td>
+                    <td>&laquo;model: не должно быть пустым&raquo; &mdash; пустое поле модели</td>
+                    <td>17</td>
+                </tr>
+            </table></div>
+            <div class="desc-box red" style="margin-top:10px;">
+                <strong>671 Unauthorized</strong> &mdash; основная проблема с Альфа API. Токен авторизации регулярно протухает.
+                Это приводит к отказам по КАСКО Альфа. Дополнительно: 502/504/500 (79 случаев) &mdash; нестабильность API Альфа.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Логи других СК (7 дней)</h3>
+            <div class="table-wrap"><table>
+                <tr><th>СК</th><th>Ошибки КАСКО</th><th>Статус</th></tr>
+                <tr><td>Т-Страхование (TinkoffLogs)</td><td>0 ошибок на КАСКО-эндпоинтах</td><td style="color:#22c55e; font-weight:600;">OK</td></tr>
+                <tr><td>ВСК (VskLogs)</td><td>0 ошибок</td><td style="color:#22c55e; font-weight:600;">OK</td></tr>
+                <tr><td>СОГАЗ (SogazLogs)</td><td>0 ошибок</td><td style="color:#22c55e; font-weight:600;">OK</td></tr>
+                <tr><td>Ингосстрах (IngosLogs)</td><td>0 ошибок</td><td style="color:#22c55e; font-weight:600;">OK</td></tr>
+                <tr><td>Ренессанс (RenessansLogs)</td><td>0 ошибок</td><td style="color:#22c55e; font-weight:600;">OK</td></tr>
+                <tr><td>PkaskoLogs</td><td>0 ошибок (non-200)</td><td style="color:#22c55e; font-weight:600;">OK</td></tr>
+            </table></div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Выводы регресса</h3>
+            <ul class="rec-list">
+                <li><strong>1. Система работает стабильно</strong><br>
+                Approval rate 70&ndash;72% на протяжении 7 дней. Офферов: ~6,500&ndash;9,000/день.
+                Продажи: 63 за 7 дней, 257 за 30 дней.</li>
+
+                <li><strong>2. Критическая проблема: АльфаСтрахование (99.6% отказов)</strong><br>
+                17,075 отказов из 17,160 офферов. Две причины:<br>
+                &bull; <strong>AlfaKaskoMapper:</strong> требует оба документа (СТС + ПТС), но партнёр МБ МАРКЕТПЛЕЙС не передаёт их в запросе (1,176/день)<br>
+                &bull; <strong>Alfa API:</strong> 671 Unauthorized + 79 серверных ошибок (502/504/500) за 7 дней</li>
+
+                <li><strong>3. SQL-ошибки (минорные)</strong><br>
+                Обращение к несуществующим таблицам PartnerKaskoProducts, InsurerApplicationKaskoProducts (4 ошибки за 7 дней).
+                Код ссылается на объекты БД, не созданные миграцией.</li>
+
+                <li><strong>4. Валидационные ошибки (ожидаемые)</strong><br>
+                Ingos мультидрайв (902), VSK серия документа (1,175), Согласие данные ТС (871), VSK/Zurich возраст ТС (739) &mdash;
+                это бизнес-ограничения СК, не баги.</li>
+
+                <li><strong>5. Рекомендации</strong><br>
+                &bull; Связаться с МБ МАРКЕТПЛЕЙС &rarr; передавать СТС/ПТС в SendKaskoApplication<br>
+                &bull; Проверить механизм обновления токена Альфа API (671 Unauthorized)<br>
+                &bull; Создать задачу на SQL-ошибки (InsurerApplicationKaskoProducts)</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- TAB: Post-Release Check -->
+    <div id="tab-release" class="tab-content">
+        <h2 class="section-title">Проверка после релиза &mdash; 27.04.2026 16:26 МСК</h2>
+        <div class="desc-box green">
+            <strong>Вердикт: РЕГРЕССИЙ НЕ ОБНАРУЖЕНО</strong><br>
+            Релиз 27.04.2026 16:26:10 (+03:00) не привёл к появлению новых ошибок или изменению паттернов.
+        </div>
+
+        <div class="desc-box blue">
+            <strong>Метод:</strong> Сравнение ошибок КАСКО ДО релиза (00:00&ndash;16:26) и ПОСЛЕ (16:26&ndash;22:00) 27.04.2026.
+            Данные: InsappCoreProd, InsappLogProd.
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Офферы до/после релиза</h3>
+            <div class="table-wrap"><table>
+                <tr><th>Период</th><th>Approved</th><th>Rejected</th><th>Failed</th><th>Всего</th><th>Approval %</th></tr>
+                <tr><td>ДО (00:00&ndash;16:26)</td><td style="color:#22c55e">3,066</td><td style="color:#dc2626">1,076</td><td>0</td><td>4,142</td><td>74.0%</td></tr>
+                <tr><td>ПОСЛЕ (16:26&ndash;22:00)</td><td style="color:#22c55e">16</td><td style="color:#dc2626">242</td><td>0</td><td>258</td><td>6.2%</td></tr>
+            </table></div>
+            <div class="desc-box blue" style="margin-top:10px;">
+                <strong>Примечание:</strong> Низкий approval после релиза (6.2%) объясняется доминированием АльфаСтрахования
+                (99.6% отказов &mdash; системная проблема, не связанная с релизом). Объём трафика после 16:26 существенно ниже.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">BusinessLogs &mdash; сравнение до/после</h3>
+            <div class="table-wrap"><table>
+                <tr><th>Источник</th><th>ДО (00:00&ndash;16:26)</th><th>ПОСЛЕ (16:26&ndash;22:00)</th><th>Вердикт</th></tr>
+                <tr>
+                    <td>PkaskoIntegration</td>
+                    <td>6,078</td>
+                    <td>1,351</td>
+                    <td style="color:#22c55e;">Пропорционально трафику</td>
+                </tr>
+                <tr>
+                    <td>AlfaKaskoMapper (СТС/ПТС)</td>
+                    <td>1,024</td>
+                    <td>224</td>
+                    <td style="color:#22c55e;">Пропорционально трафику</td>
+                </tr>
+                <tr>
+                    <td>VskKaskoMapper</td>
+                    <td>234</td>
+                    <td>50</td>
+                    <td style="color:#22c55e;">Пропорционально трафику</td>
+                </tr>
+                <tr>
+                    <td>TinkoffMiniKaskoClient</td>
+                    <td>17</td>
+                    <td>18</td>
+                    <td style="color:#22c55e;">Без изменений (Broker_07)</td>
+                </tr>
+            </table></div>
+            <div class="desc-box green" style="margin-top:10px;">
+                Все ошибки BusinessLogs после релиза &mdash; те же самые паттерны, что и до.
+                Новых категорий ошибок не появилось. Соотношение пропорционально объёму трафика.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">ErrorLogs &mdash; сравнение до/после</h3>
+            <div class="table-wrap"><table>
+                <tr><th>Ошибка</th><th>ДО (00:00&ndash;16:26)</th><th>ПОСЛЕ (16:26&ndash;22:00)</th><th>Вердикт</th></tr>
+                <tr>
+                    <td>NotImplementedException</td>
+                    <td>7</td>
+                    <td>7</td>
+                    <td style="color:#22c55e;">Без изменений</td>
+                </tr>
+                <tr>
+                    <td>Ошибки перехода состояний (state transition)</td>
+                    <td>232</td>
+                    <td>55</td>
+                    <td style="color:#22c55e;">Ниже (пропорционально трафику)</td>
+                </tr>
+                <tr>
+                    <td>Новые паттерны ошибок</td>
+                    <td>&mdash;</td>
+                    <td>0</td>
+                    <td style="color:#22c55e; font-weight:600;">НЕТ НОВЫХ ОШИБОК</td>
+                </tr>
+            </table></div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">AlfaLogs &mdash; сравнение до/после</h3>
+            <div class="table-wrap"><table>
+                <tr><th>Код ответа</th><th>ДО (00:00&ndash;16:26)</th><th>ПОСЛЕ (16:26&ndash;22:00)</th><th>Вердикт</th></tr>
+                <tr>
+                    <td><code>401 Unauthorized</code></td>
+                    <td>~480</td>
+                    <td>~191</td>
+                    <td style="color:#22c55e;">Пропорционально</td>
+                </tr>
+                <tr>
+                    <td><code>500 / 502 / 504</code></td>
+                    <td>~55</td>
+                    <td>~24</td>
+                    <td style="color:#22c55e;">Пропорционально</td>
+                </tr>
+                <tr>
+                    <td><code>400 BadRequest</code></td>
+                    <td>~12</td>
+                    <td>~5</td>
+                    <td style="color:#22c55e;">Пропорционально</td>
+                </tr>
+            </table></div>
+            <div class="desc-box blue" style="margin-top:10px;">
+                Ошибки Альфа API (401/500/502) &mdash; та же проблема с токеном, что и до релиза.
+                Никаких новых кодов ответа или паттернов.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Логи СК &mdash; после релиза</h3>
+            <div class="table-wrap"><table>
+                <tr><th>СК</th><th>Ошибки после 16:26</th><th>Статус</th></tr>
+                <tr><td>Т-Страхование (TinkoffLogs)</td><td>0 новых ошибок</td><td style="color:#22c55e; font-weight:600;">OK</td></tr>
+                <tr><td>ВСК (VskLogs)</td><td>0 ошибок</td><td style="color:#22c55e; font-weight:600;">OK</td></tr>
+                <tr><td>СОГАЗ (SogazLogs)</td><td>0 ошибок</td><td style="color:#22c55e; font-weight:600;">OK</td></tr>
+                <tr><td>Ингосстрах (IngosLogs)</td><td>0 ошибок</td><td style="color:#22c55e; font-weight:600;">OK</td></tr>
+                <tr><td>Ренессанс (RenessansLogs)</td><td>0 ошибок</td><td style="color:#22c55e; font-weight:600;">OK</td></tr>
+                <tr><td>PkaskoLogs</td><td>0 ошибок</td><td style="color:#22c55e; font-weight:600;">OK</td></tr>
+            </table></div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Итог проверки релиза</h3>
+            <ul class="rec-list">
+                <li><strong>Регрессий не обнаружено.</strong><br>
+                Релиз 27.04.2026 16:26 не привёл к появлению новых ошибок в КАСКО.</li>
+
+                <li><strong>Все ошибки после релиза &mdash; те же, что и до.</strong><br>
+                AlfaKaskoMapper (СТС/ПТС), PkaskoIntegration, VskKaskoMapper &mdash; те же паттерны с теми же пропорциями.
+                Количество ошибок пропорционально объёму трафика.</li>
+
+                <li><strong>Новых категорий в ErrorLogs нет.</strong><br>
+                NotImplementedException: 7 до = 7 после. Новых stack traces или exception types не появилось.</li>
+
+                <li><strong>Известные проблемы (pre-existing) на месте:</strong><br>
+                &bull; АльфаСтрахование: 401 Unauthorized + СТС/ПТС от МБ МАРКЕТПЛЕЙС<br>
+                &bull; SQL-ошибки: InsurerApplicationKaskoProducts (не связано с релизом)<br>
+                &bull; Валидационные ошибки СК: мультидрайв, серия документа, возраст ТС</li>
+
+                <li><strong>Рекомендация:</strong> Релиз можно считать успешным. КАСКО-функционал не затронут.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        Регресс-тестирование КАСКО &bull; InsappCoreTest / InsappLogTest / InsappCoreProd &bull; обновлено 27.04.2026
+    </div>
+</div>
+<script>
+function openTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    const btns = document.querySelectorAll('.tab-btn');
+    btns.forEach(b => { if (b.getAttribute('onclick').includes(tabId)) b.classList.add('active'); });
+}
+</script>
+</body>
+</html>

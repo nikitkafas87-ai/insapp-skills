@@ -1,0 +1,7 @@
+interface:
+  display_name: "Tracker Add Task"
+  short_description: "Create Yandex Tracker tasks"
+  default_prompt: "Use $tracker-add-task to create these Yandex Tracker tasks and verify each created issue."
+policy:
+  allow_implicit_invocation: true
+

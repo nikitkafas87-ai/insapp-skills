@@ -1,0 +1,6 @@
+interface:
+  display_name: "Pool Reinsurance Check"
+  short_description: "Check and reproduce reinsurance pool cases"
+  default_prompt: "Use $pool-reinsurance-check to verify reinsurance pool handling across insurer logs, reproduce missing pool signals through Public API when needed, and prepare a checked report."
+policy:
+  allow_implicit_invocation: true

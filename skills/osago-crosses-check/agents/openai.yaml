@@ -1,0 +1,3 @@
+display_name: OSAGO Crosses Check
+short_description: Audit enabled and disabled OSAGO crosses for active partner ApiKeys.
+default_prompt: Check active OSAGO ApiKeys for active partners, generate a crosses report, and summarize enabled and disabled crosses by ApiKey.

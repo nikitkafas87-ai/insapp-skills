@@ -1,0 +1,891 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prod Dashboard Regression - 12.05.2026</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --ink: #1f2a37;
+      --muted: #667085;
+      --line: #d7dee8;
+      --green: #087443;
+      --green-bg: #e9f7ef;
+      --blue: #1b5fbf;
+      --blue-bg: #edf4ff;
+      --amber: #9a5b00;
+      --amber-bg: #fff5df;
+      --red: #b42318;
+      --red-bg: #fff0ed;
+      --violet: #6d3fc8;
+      --violet-bg: #f1edff;
+      --shadow: 0 12px 30px rgba(15, 23, 42, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #17324d 0%, #145a6f 46%, #19663e 100%);
+      color: #fff;
+      padding: 44px 28px 36px;
+    }
+
+    .hero-inner,
+    main {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 999px;
+      color: rgba(255,255,255,.88);
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(30px, 5vw, 54px);
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 880px;
+      margin: 0;
+      color: rgba(255,255,255,.88);
+      font-size: 18px;
+    }
+
+    main {
+      padding: 26px 0 50px;
+    }
+
+    section {
+      margin-top: 24px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-head {
+      padding: 20px 22px 14px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .body {
+      padding: 20px 22px 22px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid.cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .grid.cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fbfcfe;
+      min-height: 120px;
+    }
+
+    .metric .label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .metric .value {
+      font-weight: 750;
+      font-size: 25px;
+      line-height: 1.2;
+      letter-spacing: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .metric .note {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 13px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .status.ok { color: var(--green); background: var(--green-bg); }
+    .status.info { color: var(--blue); background: var(--blue-bg); }
+    .status.warn { color: var(--amber); background: var(--amber-bg); }
+    .status.fail { color: var(--red); background: var(--red-bg); }
+    .status.todo { color: var(--violet); background: var(--violet-bg); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 12px 11px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: #344054;
+      background: #f8fafc;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .mono {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 12.5px;
+      overflow-wrap: anywhere;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 148px 1fr auto;
+      gap: 14px;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fbfcfe;
+    }
+
+    .step strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .callout {
+      border-left: 4px solid var(--blue);
+      background: var(--blue-bg);
+      padding: 14px 16px;
+      border-radius: 6px;
+      color: #17324d;
+    }
+
+    .callout.warn {
+      border-left-color: var(--amber);
+      background: var(--amber-bg);
+      color: #5d3a00;
+    }
+
+    .callout.ok {
+      border-left-color: var(--green);
+      background: var(--green-bg);
+      color: #104b2f;
+    }
+
+    .proposal {
+      display: grid;
+      gap: 12px;
+    }
+
+    .browser-tabs {
+      display: grid;
+      gap: 16px;
+    }
+
+    .tab-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: flex-end;
+      border-bottom: 1px solid var(--line);
+      padding: 0 2px;
+    }
+
+    .tab-button {
+      appearance: none;
+      border: 1px solid var(--line);
+      border-bottom: 0;
+      background: #edf1f7;
+      color: #344054;
+      border-radius: 8px 8px 0 0;
+      padding: 10px 15px;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+      min-height: 42px;
+    }
+
+    .tab-button:hover {
+      background: #f7f9fc;
+    }
+
+    .tab-button.active {
+      background: var(--surface);
+      color: var(--ink);
+      position: relative;
+      top: 1px;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .tab-summary {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .proposal-item {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fbfcfe;
+    }
+
+    .proposal-index {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--violet-bg);
+      color: var(--violet);
+      font-weight: 750;
+    }
+
+    .proposal-item h3 {
+      margin: 0 0 4px;
+      font-size: 16px;
+    }
+
+    .proposal-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 900px) {
+      .grid.cols-4,
+      .grid.cols-3 {
+        grid-template-columns: 1fr 1fr;
+      }
+      .step {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero-inner,
+      main {
+        width: min(100% - 24px, 1180px);
+      }
+      .grid.cols-4,
+      .grid.cols-3 {
+        grid-template-columns: 1fr;
+      }
+      .section-head {
+        flex-direction: column;
+      }
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">PROD Dashboard • 12 мая 2026</div>
+      <h1>Регресс настроек партнера и API-ключей</h1>
+      <p>Проверка production-версии dashboard.insapp.ru на отдельном тестовом партнере. Изменения выполнялись только через штатный Dashboard/API, база `InsappCoreProd` использовалась только для read-only сверок.</p>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>Итог</h2>
+          <p>Основной функционал создания партнера, API-ключей, СК/вендоров, карточек настроек и КВ на prod работает. Критичных блокеров не найдено.</p>
+        </div>
+        <span class="status ok">Пройдено</span>
+      </div>
+      <div class="body">
+        <div class="grid cols-4">
+          <div class="metric">
+            <div class="label">Партнер</div>
+            <div class="value">Создан и отключен</div>
+            <div class="note mono">08deb033-67f9-428d-a5ce-d42fb0072721</div>
+          </div>
+          <div class="metric">
+            <div class="label">API-ключи</div>
+            <div class="value">4 продукта</div>
+            <div class="note">ОСАГО, КАСКО, Ипотека, МФО</div>
+          </div>
+          <div class="metric">
+            <div class="label">DB cleanup</div>
+            <div class="value">0 активных</div>
+            <div class="note">партнеров, ключей, СК и вендоров</div>
+          </div>
+          <div class="metric">
+            <div class="label">KV cleanup</div>
+            <div class="value">0 строк</div>
+            <div class="note">тестовые периоды и комиссии удалены</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>Тестовые сущности</h2>
+          <p>Основной идентификатор ключей в отчете - полный `ApiKey`; рядом указан полный `ApiKeyId`.</p>
+        </div>
+      </div>
+      <div class="body">
+        <table>
+          <thead>
+            <tr>
+              <th>Сущность</th>
+              <th>Продукт</th>
+              <th>ApiKey</th>
+              <th>GUID</th>
+              <th>Финальный статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Партнер</td>
+              <td>-</td>
+              <td class="mono">TEST Codex dashboard regression 2026-05-12</td>
+              <td class="mono">08deb033-67f9-428d-a5ce-d42fb0072721</td>
+              <td><span class="status ok">Отключен</span></td>
+            </tr>
+            <tr>
+              <td>API-ключ</td>
+              <td>ОСАГО [1]</td>
+              <td class="mono">559229f8b4b04b8fb52d16b40d566054</td>
+              <td class="mono">c9712f4f-cc87-4629-ae8a-9b8a7b579dfa</td>
+              <td><span class="status ok">Отключен</span></td>
+            </tr>
+            <tr>
+              <td>API-ключ</td>
+              <td>КАСКО [2]</td>
+              <td class="mono">9825b51149904501b2c48c97073f16a2</td>
+              <td class="mono">0a325581-8eb2-4578-a3c4-41d1c6888359</td>
+              <td><span class="status ok">Отключен</span></td>
+            </tr>
+            <tr>
+              <td>API-ключ</td>
+              <td>Ипотека [3]</td>
+              <td class="mono">e433e1d5ab734e5d91b0583493be5de8</td>
+              <td class="mono">1a4f0bf5-6e83-4fa5-a92e-998541a65b0a</td>
+              <td><span class="status ok">Отключен</span></td>
+            </tr>
+            <tr>
+              <td>API-ключ</td>
+              <td>МФО [5]</td>
+              <td class="mono">dbef4571ebb94f0a999fc733d60b24fa</td>
+              <td class="mono">185affae-e6bf-4559-8029-e7e1252d3441</td>
+              <td><span class="status ok">Отключен</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>Что проверено</h2>
+          <p>Покрытие по ранее протестированным блокам Dashboard. Ранее найденные на dev дефекты на prod не воспроизвелись, считаем их исправленными.</p>
+        </div>
+      </div>
+      <div class="body timeline">
+        <div class="step">
+          <strong>Партнер</strong>
+          <p>Создание тестового партнера, открытие карточки, сверка UI/API/DB, последующая деактивация.</p>
+          <span class="status ok">OK</span>
+        </div>
+        <div class="step">
+          <strong>Создание API-ключей</strong>
+          <p>ОСАГО, КАСКО, МФО и Ипотека. Проверены продукт, описание, статус, `SupportedProductTypesJson`, карточка ключа.</p>
+          <span class="status ok">OK</span>
+        </div>
+        <div class="step">
+          <strong>ОСАГО: настройки API-ключа</strong>
+          <p>Сквозное изменение, save, сверка payload/DB и восстановление baseline выполнены по вкладкам: `Основные настройки`, `Приоритетная СК`, `Лимиты`, `Пролонгация`, `Email и брендирование`, `Бейджи и подарки`, `AlfaId настройки`.</p>
+          <span class="status ok">OK</span>
+        </div>
+        <div class="step">
+          <strong>ОСАГО: СК и карточка СК</strong>
+          <p>Добавление одной и нескольких СК, защита от дублей, table toggles, карточка СК, credentials, РГС-каналы, пул, кросс-продукты add/save/delete без reload.</p>
+          <span class="status ok">OK</span>
+        </div>
+        <div class="step">
+          <strong>ОСАГО: КВ</strong>
+          <p>Загрузка `GET Commissions`, создание текущего и будущего периода, изменение ставок, min commissions, исключения, кроссовая комиссия, корректное обновление UI после удаления периодов.</p>
+          <span class="status ok">OK</span>
+        </div>
+        <div class="step">
+          <strong>КАСКО: СК</strong>
+          <p>Добавление СК, дубль не доступен, карточка открывается, продуктовые поля отображаются, блок `Кросс-продукты` отсутствует.</p>
+          <span class="status ok">OK</span>
+        </div>
+        <div class="step">
+          <strong>Ипотека: СК</strong>
+          <p>Создан ипотечный ключ, добавлена СК, дубли заблокированы, карточка открывается, лишние кросс-продукты не показываются.</p>
+          <span class="status ok">OK</span>
+        </div>
+        <div class="step">
+          <strong>МФО: вендоры</strong>
+          <p>Добавление одного и нескольких вендоров, защита от дублей, сохранение статуса `isEnabled -> IsDisabled`, карточка вендора.</p>
+          <span class="status ok">OK</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>Детальное покрытие</h2>
+          <p>Переключаемые разделы по основным кнопкам и страницам настроек ключа `559229f8b4b04b8fb52d16b40d566054`.</p>
+        </div>
+      </div>
+      <div class="body browser-tabs" data-tabs>
+        <div class="tab-list" role="tablist" aria-label="Детальное покрытие">
+          <button class="tab-button active" type="button" role="tab" aria-selected="true" aria-controls="tab-api-settings" data-tab-target="tab-api-settings">Настройки API-ключа</button>
+          <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="tab-kv" data-tab-target="tab-kv">КВ партнера</button>
+          <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="tab-insurers-vendors" data-tab-target="tab-insurers-vendors">СК/Вендоры</button>
+        </div>
+
+        <div id="tab-api-settings" class="tab-panel active" role="tabpanel">
+          <p class="tab-summary">Сквозной цикл: изменение в UI, `PUT /api/PartnerApiKey`, read-only `SELECT` в `InsappCoreProd`, восстановление baseline.</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Вкладка</th>
+                <th>Что менялось / сверялось</th>
+                <th>Итог</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Основные настройки</td>
+                <td>Права КЦ, callback, landing URL, обогащение, SMS-проверка данных, возврат клиента на офферы, быстрый email-возврат.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>Приоритетная СК</td>
+                <td>Приоритетная страховая, поведение показа приоритетной СК, таймаут ожидания ответа.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>Лимиты</td>
+                <td>Включение лимитов и изменение значений для `Характеристики авто` и `КБМ`; payload ушел как `limitsJson={"CarCharacteristics":11,"Kbm":12}`.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>Пролонгация</td>
+                <td>Включение общей и партнерской пролонгации, всех видимых email-уведомлений и SMS-уведомлений на вкладке.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>Email и брендирование</td>
+                <td>Email отправителя, имя отправителя в email-рассылке, имя отправителя в SMS-рассылке.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>Бейджи и подарки</td>
+                <td>Включение бейджей, промокодов и заполнение провайдеров промокодов валидными значениями `2`, `3`, `4`, `5`; DB подтвердила `GiftProvider1=2`, `GiftProvider2=3`, `GiftProvider3=4`, `GiftProvider4=5`.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>AlfaId настройки</td>
+                <td>Платные сервисы, настройки обогащения, стоимости запросов, обработка десятичных значений через запятую.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout ok" style="margin-top:16px">
+            Ранее найденные на dev дефекты по настройкам API-ключа на prod не воспроизвелись. Проверенные изменения уходили в `PUT /api/PartnerApiKey`, подтверждались read-only `SELECT` в `InsappCoreProd` и были восстановлены в исходное состояние.
+          </div>
+        </div>
+
+        <div id="tab-kv" class="tab-panel" role="tabpanel">
+          <p class="tab-summary">Проверялась страница `КВ партнера` для ОСАГО-ключа: загрузка, действия с периодами, исключения, комиссии и cleanup.</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Кнопка / блок</th>
+                <th>Что тестировалось</th>
+                <th>Итог</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Открыть КВ партнера</td>
+                <td>Переход на страницу, `GET /api/PartnerCommissions/Commissions/{apiKeyId}`, пустое состояние без ошибок.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>Новый период</td>
+                <td>Создание текущего периода и будущего периода, проверка диапазонов дат в API/DB и отображение текущего/будущего статуса.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>Добавить исключение</td>
+                <td>Модалка, disabled без выбора СК, отсутствие `Все страховые` в dropdown, создание исключения для выбранной страховой и сверка сохранения.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>Сохранить настройки</td>
+                <td>Смена типа комиссии, min commission partner/Insapp, cross commission type, voluntary cross checkbox и сверка payload/DB.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>Удалить период</td>
+                <td>Удаление будущего и текущего тестовых периодов через Dashboard API, проверка `value=[]`, отсутствие stale UI после удаления последнего периода.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>Скопировать период / Удалить все КВ за период</td>
+                <td>Копирование периода, очистка КВ за период, удаление скопированного периода и финальная сверка отсутствия тестовых периодов/комиссий.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="tab-insurers-vendors" class="tab-panel" role="tabpanel">
+          <p class="tab-summary">Проверялись страницы `СК/Вендоры` для ОСАГО, КАСКО, Ипотеки и МФО: добавление, дубли, таблицы, карточки и cleanup.</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Кнопка / блок</th>
+                <th>Что тестировалось</th>
+                <th>Итог</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Добавить СК</td>
+                <td>ОСАГО, КАСКО, Ипотека: открытие модалки, disabled без выбора, single/multiple add, duplicate prevention, DB `ProductTypeId` и `IsDisabled` mapping.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>Таблица СК</td>
+                <td>Статус `isEnabled -> IsDisabled`, рассрочка, `usesNewApi`, продуктовые переключатели и сохранение через table save.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>Карточка СК</td>
+                <td>Открытие карточек ОСАГО/КАСКО/Ипотеки, credentials, продуктовые поля, отсутствие кросс-продуктов на КАСКО и Ипотеке.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>Кросс-продукты в карточке ОСАГО</td>
+                <td>Добавление кросса, сохранение, повторное добавление после save, удаление без ручного reload, проверка `PartnerInsurerUpsaleSettings` cleanup.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>Добавить вендор</td>
+                <td>МФО: открытие модалки, disabled без выбора, добавление одного и нескольких вендоров, duplicate prevention.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>Таблица и карточка вендора</td>
+                <td>Статус `isEnabled -> IsDisabled`, сохранение, открытие карточки, credentials.</td>
+                <td><span class="status ok">OK</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>Сверка UI/API/DB</h2>
+          <p>Ключевые подтверждения на проде после сохранения и cleanup.</p>
+        </div>
+      </div>
+      <div class="body">
+        <table>
+          <thead>
+            <tr>
+              <th>Проверка</th>
+              <th>API/DB результат</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Создание partner/API keys</td>
+              <td>Все созданные ключи имеют ожидаемые `SupportedProductTypesJson`: `[1]`, `[2]`, `[3]`, `[5]`.</td>
+              <td><span class="status ok">OK</span></td>
+            </tr>
+            <tr>
+              <td>OSAGO API-key settings</td>
+              <td>Поля вкладок `Основные настройки`, `Приоритетная СК`, `Лимиты`, `Пролонгация`, `Email и брендирование`, `Бейджи и подарки`, `AlfaId настройки` сохранялись в `PUT /api/PartnerApiKey`, DB сверялась с payload, затем значения восстановлены в baseline.</td>
+              <td><span class="status ok">OK</span></td>
+            </tr>
+            <tr>
+              <td>Decimal comma в request costs</td>
+              <td>UI `10,66` отправил и сохранил `10.66`, не обрезал до `10`.</td>
+              <td><span class="status ok">OK</span></td>
+            </tr>
+            <tr>
+              <td>Ранее найденные dev-дефекты</td>
+              <td>По проверенным сценариям API-key settings, СК/вендоров и КВ дефекты, найденные на dev, на prod не воспроизвелись.</td>
+              <td><span class="status ok">Пофикшены</span></td>
+            </tr>
+            <tr>
+              <td>Cleanup DB</td>
+              <td>`ActivePartner=0`, `ActiveApiKeys=0`, `EnabledInsurerSettings=0`, `EnabledFinOrgSettings=0`, `RemainingKvPeriods=0`, `RemainingKvCommissionsById=0`.</td>
+              <td><span class="status ok">OK</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>Наблюдения</h2>
+          <p>Не блокируют общий итог, но требуют внимания в интерфейсе или продуктовой логике.</p>
+        </div>
+      </div>
+      <div class="body grid cols-3">
+        <div class="callout warn">
+          <strong>Карточка МФО-вендора</strong><br>
+          В шапке значение подписано как `ApiKey`, но фактически отображается `ApiKeyId=185affae-e6bf-4559-8029-e7e1252d3441`; полный `ApiKey=dbef4571ebb94f0a999fc733d60b24fa` отсутствует.
+        </div>
+        <div class="callout warn">
+          <strong>KV commission rate</strong><br>
+          В КВ ввод `12.5` для процентной ставки ушел в payload и DB как `12`. Если дробные проценты должны поддерживаться, это стоит оформить отдельной правкой.
+        </div>
+        <div class="callout ok">
+          <strong>Промокоды</strong><br>
+          Перепроверено на валидных значениях `2`, `3`, `4`, `5`: все четыре провайдера сохранились в DB. Предыдущее замечание снято: оно было связано с использованием значения `1` вне валидного диапазона `2..6`.
+        </div>
+        <div class="callout ok">
+          <strong>Dev-регрессия</strong><br>
+          Дефекты, ранее найденные на dev по проверенным блокам, на prod не воспроизвелись. Критичных новых блокеров в ходе проверки не найдено.
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>Предлагаемые правки интерфейса</h2>
+          <p>Отдельный блок предложений по улучшению читаемости и управляемости Dashboard.</p>
+        </div>
+        <span class="status todo">Рекомендации</span>
+      </div>
+      <div class="body proposal">
+        <div class="proposal-item">
+          <div class="proposal-index">1</div>
+          <div>
+            <h3>Заменить `apiKeyId` в шапках страниц настроек ключа на `ApiKey`</h3>
+            <p>Менеджеры и QA ориентируются по рабочему ключу. `ApiKeyId` нужен для технической диагностики, но в пользовательской шапке должен отображаться полный `ApiKey`, как основной идентификатор.</p>
+          </div>
+        </div>
+        <div class="proposal-item">
+          <div class="proposal-index">2</div>
+          <div>
+            <h3>Добавить фильтр по активным/неактивным партнерам в таблицу партнеров</h3>
+            <p>После регрессов и аудита тестовые партнеры остаются отключенными. Фильтр ускорит поиск актуальных партнеров и снизит риск работы не с той карточкой.</p>
+          </div>
+        </div>
+        <div class="proposal-item">
+          <div class="proposal-index">3</div>
+          <div>
+            <h3>Добавить бейдж активности в шапку карточки партнера</h3>
+            <p>Статус партнера должен быть виден сразу при открытии карточки: `Активен` или `Неактивен`. Это особенно важно при проверке prod cleanup и сопровождении партнеров.</p>
+          </div>
+        </div>
+        <div class="proposal-item">
+          <div class="proposal-index">4</div>
+          <div>
+            <h3>Разрешить read-only просмотр настроек без прав редактирования</h3>
+            <p>Если у учетной записи нет прав на редактирование, страницы настроек API-ключа, КВ и СК должны открываться в режиме просмотра. Сейчас при открытии этих вкладок появляется авторизационная ошибка, из-за чего невозможно даже посмотреть текущие настройки.</p>
+          </div>
+        </div>
+        <div class="proposal-item">
+          <div class="proposal-index">5</div>
+          <div>
+            <h3>Добавить отдельную вкладку со всеми API-ключами</h3>
+            <p>Нужна единая таблица API-ключей из базы с быстрыми фильтрами по активности ключа, типу продукта, партнеру и другим рабочим признакам. Это упростит аудит ключей, поиск нужного продукта и контроль отключенных/активных настроек без ручного перехода по карточкам партнеров.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <div>
+          <h2>Финальная DB-сверка</h2>
+          <p>Read-only `SELECT` в `InsappCoreProd` после cleanup.</p>
+        </div>
+      </div>
+      <div class="body">
+        <table>
+          <thead>
+            <tr>
+              <th>Показатель</th>
+              <th>Значение</th>
+              <th>Комментарий</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ActivePartner</td>
+              <td class="mono">0</td>
+              <td>Тестовый партнер отключен.</td>
+            </tr>
+            <tr>
+              <td>ActiveApiKeys</td>
+              <td class="mono">0</td>
+              <td>Все 4 созданных ключа отключены.</td>
+            </tr>
+            <tr>
+              <td>EnabledInsurerSettings</td>
+              <td class="mono">0</td>
+              <td>OSAGO/KASKO/Ипотека настройки СК отключены.</td>
+            </tr>
+            <tr>
+              <td>EnabledFinOrgSettings</td>
+              <td class="mono">0</td>
+              <td>МФО-вендоры отключены.</td>
+            </tr>
+            <tr>
+              <td>RemainingKvPeriods</td>
+              <td class="mono">0</td>
+              <td>Тестовые периоды КВ удалены.</td>
+            </tr>
+            <tr>
+              <td>RemainingKvCommissionsById</td>
+              <td class="mono">0</td>
+              <td>Тестовые комиссии КВ удалены.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="footer-note">Журнал проверки: `journals/2026-05-12-prod-dashboard-full-regression/log.md`.</p>
+      </div>
+    </section>
+  </main>
+  <script>
+    document.querySelectorAll('[data-tabs]').forEach((tabs) => {
+      const buttons = Array.from(tabs.querySelectorAll('[data-tab-target]'));
+      const panels = Array.from(tabs.querySelectorAll('.tab-panel'));
+
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const targetId = button.dataset.tabTarget;
+          buttons.forEach((item) => {
+            const isActive = item === button;
+            item.classList.toggle('active', isActive);
+            item.setAttribute('aria-selected', String(isActive));
+          });
+          panels.forEach((panel) => {
+            panel.classList.toggle('active', panel.id === targetId);
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>

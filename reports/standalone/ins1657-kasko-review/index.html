@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>INS-1657: КАСКО после ОСАГО</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --panel: #ffffff;
+      --text: #17202a;
+      --muted: #667085;
+      --line: #d9e0e8;
+      --blue: #1769e0;
+      --green: #12805c;
+      --amber: #b05c00;
+      --red: #c0342b;
+      --slate: #344054;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.48;
+    }
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 24px; }
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: start;
+      padding: 24px 0 18px;
+      border-bottom: 1px solid var(--line);
+    }
+    h1 { margin: 0 0 8px; font-size: 34px; letter-spacing: 0; }
+    h2 { margin: 0 0 12px; font-size: 22px; letter-spacing: 0; }
+    h3 { margin: 0 0 8px; font-size: 17px; letter-spacing: 0; }
+    p { margin: 0 0 10px; }
+    .sub { color: var(--muted); }
+    .meta { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+    .pill, .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .tag.ok { color: var(--green); border-color: #a8dcc9; background: #eefaf5; }
+    .tag.warn { color: var(--amber); border-color: #f1c27d; background: #fff7e8; }
+    .tag.bad { color: var(--red); border-color: #efb5b1; background: #fff1f0; }
+    .tag.info { color: var(--blue); border-color: #b8cdf7; background: #edf4ff; }
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      gap: 6px;
+      overflow: auto;
+      padding: 12px 0;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+    }
+    nav a {
+      color: var(--slate);
+      text-decoration: none;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      font-size: 14px;
+      flex: 0 0 auto;
+    }
+    section { margin-top: 22px; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fff;
+      min-height: 118px;
+    }
+    .metric .num {
+      display: block;
+      font-size: 32px;
+      font-weight: 760;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .metric p { margin: 0; font-weight: 650; }
+    .hint { margin-top: 7px; color: var(--muted); font-size: 13px; }
+    .blue { color: var(--blue); }
+    .green { color: var(--green); }
+    .amber { color: var(--amber); }
+    .red { color: var(--red); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .callout {
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px 14px;
+    }
+    .callout strong { display: block; margin-bottom: 5px; }
+    .callout.green { border-left-color: var(--green); }
+    .callout.amber { border-left-color: var(--amber); }
+    .callout.red { border-left-color: var(--red); }
+    .callout.blue { border-left-color: var(--blue); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
+    th { background: #f3f6fa; font-weight: 700; color: var(--slate); }
+    tr:last-child td { border-bottom: 0; }
+    .table-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    .mono { font-family: Consolas, "SFMono-Regular", Menlo, monospace; font-size: 12px; overflow-wrap: anywhere; }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 12px 14px;
+    }
+    details + details { margin-top: 10px; }
+    summary { cursor: pointer; font-weight: 700; color: var(--slate); }
+    ul { margin: 8px 0 0 18px; padding: 0; }
+    li { margin: 5px 0; }
+    footer { color: var(--muted); font-size: 13px; padding: 28px 0 8px; }
+    @media (max-width: 980px) {
+      header, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .meta { justify-content: flex-start; }
+    }
+    @media (max-width: 620px) {
+      .wrap { padding: 14px; }
+      h1 { font-size: 27px; }
+      .cards { grid-template-columns: 1fr; }
+      th, td { padding: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>КАСКО после ОСАГО: регрессия по партнерам</h1>
+        <p class="sub">Сокращенная и перепроверенная версия отчета: только проверочные выводы, партнерская воронка, здоровье подключенных ключей и понятные замечания.</p>
+      </div>
+      <div class="meta">
+        <span class="pill">Обновлено 22.05.2026</span>
+        <span class="pill">Период данных: 19.05.2026-22.05.2026</span>
+        <span class="pill">InsappCoreProd + InsappLogProd</span>
+      </div>
+    </header>
+
+    <nav>
+      <a href="#summary">Итог</a>
+      <a href="#partners">Партнеры</a>
+      <a href="#keys">Ключи</a>
+      <a href="#agreements">Догонялки</a>
+      <a href="#filled">Filled</a>
+      <a href="#notes">Замечания</a>
+      <a href="#method">Методика</a>
+    </nav>
+
+    <section class="panel" id="summary">
+      <h2>Короткий вывод</h2>
+      <p>Создание дочерних КАСКО после ОСАГО работает на фактическом трафике 7 партнерских связок. Связь с родительской ОСАГО и мэппинг API-ключей валидны во всех найденных дочерних заявках. Продаж именно по сценарию фичи пока нет.</p>
+      <div class="cards">
+        <article class="metric"><span class="num blue">17</span><p>активных связок OSAGO -> KASKO</p><div class="hint">перепроверено по `KaskoFromOsagoApiKeyId`</div></article>
+        <article class="metric"><span class="num green">17/17</span><p>KASKO-ключей с LandingUrl</p><div class="hint">требование по лендингу выполнено</div></article>
+        <article class="metric"><span class="num blue">132</span><p>дочерние КАСКО-заявки</p><div class="hint">`ProductTypeId = 2`, `ApplicationTypeId = 9`</div></article>
+        <article class="metric"><span class="num red">0</span><p>оплат по фиче</p><div class="hint">нет paid child KASKO type 9</div></article>
+      </div>
+      <div class="grid-3" style="margin-top:14px">
+        <div class="callout green"><strong>Создание и мэппинг OK</strong>132/132 имеют родительскую ОСАГО, родитель `ProductTypeId = 1`, дочерний KASKO key совпадает с `KaskoFromOsagoApiKeyId`.</div>
+        <div class="callout blue"><strong>Воронка</strong>126/132 дошли до `SentToInsurers`; 51 заявка получила оффер `КАСКО "за 3"` на 4 950.</div>
+        <div class="callout amber"><strong>Исправление отчета</strong>`KaskoProcessTypeId` проверяется только на подключенном KASKO-ключе, по которому работает фича. OSAGO process type в этой проверке не используется.</div>
+      </div>
+    </section>
+
+    <section class="panel" id="partners">
+      <h2>Партнерская воронка</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Партнер</th>
+              <th>КАСКО</th>
+              <th>Parent + mapping</th>
+              <th>SentToInsurers</th>
+              <th>OfferRecived</th>
+              <th>RejectAllInsurers</th>
+              <th>Filled</th>
+              <th>Успешные офферы</th>
+              <th>Оплаты</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>БАНК ГПБ (АО)</td><td>45</td><td><span class="tag ok">45/45</span></td><td>42</td><td>18</td><td>24</td><td>3</td><td>18</td><td>0</td></tr>
+            <tr><td>АО "АЛЬФА-БАНК"</td><td>32</td><td><span class="tag ok">32/32</span></td><td>30</td><td>11</td><td>19</td><td>2</td><td>11</td><td>0</td></tr>
+            <tr><td>ООО "ЛИКАРД"</td><td>31</td><td><span class="tag ok">31/31</span></td><td>30</td><td>8</td><td>22</td><td>1</td><td>8</td><td>0</td></tr>
+            <tr><td>АО "АЛЬФА-БАНК" - МЛМ</td><td>11</td><td><span class="tag ok">11/11</span></td><td>11</td><td>5</td><td>6</td><td>0</td><td>5</td><td>0</td></tr>
+            <tr><td>ПАО "МЕГАФОН"</td><td>5</td><td><span class="tag ok">5/5</span></td><td>5</td><td>2</td><td>3</td><td>0</td><td>2</td><td>0</td></tr>
+            <tr><td>ПАО БАНК ЗЕНИТ</td><td>5</td><td><span class="tag ok">5/5</span></td><td>5</td><td>4</td><td>1</td><td>0</td><td>4</td><td>0</td></tr>
+            <tr><td>АО "ТАНДЕР"</td><td>3</td><td><span class="tag ok">3/3</span></td><td>3</td><td>3</td><td>0</td><td>0</td><td>3</td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="sub" style="margin-top:10px">`Parent + mapping` означает: у дочерней КАСКО есть родительская ОСАГО, родитель `ProductTypeId = 1`, а дочерний `ApiKeyId` равен `KaskoFromOsagoApiKeyId` родительского ОСАГО-ключа.</p>
+    </section>
+
+    <section class="panel" id="keys">
+      <h2>Подключенные ключи и лендинги</h2>
+      <p>В отчете теперь проверяется именно то, что нужно для подключенных KASKO-ключей: активность, связь с ОСАГО-ключом, KASKO `KaskoProcessTypeId` и заполненный `LandingUrl`. Все 17 подключенных KASKO-ключей имеют лендинг.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Партнер</th><th>OSAGO ApiKeyId</th><th>KASKO ApiKeyId</th><th>KASKO KaskoProcessTypeId</th><th>KASKO LandingUrl</th><th>Заявок в периоде</th></tr></thead>
+          <tbody>
+            <tr><td>БАНК ГПБ (АО)</td><td class="mono">d9d1d57c-0288-48d9-87a9-e22f760154f0</td><td class="mono">44dec4a6-53b7-43e7-bff3-781b7579fc41</td><td>1</td><td>https://kasko-gpb.insapp.ru/</td><td>45</td></tr>
+            <tr><td>АО "АЛЬФА-БАНК"</td><td class="mono">6e5a6599-6a8f-4716-a199-f8b0637aa0af</td><td class="mono">b35c7579-7f55-4c39-b368-2e424d5ab699</td><td>1</td><td>https://kasko.ab.insapp.ru/</td><td>32</td></tr>
+            <tr><td>ООО "ЛИКАРД"</td><td class="mono">3e728a37-7225-4720-bee8-e7494b73fedf</td><td class="mono">75ccb79e-1ddb-446f-a853-3e28a92182fe</td><td>1</td><td>https://kasko.licard.insapp.ru/</td><td>31</td></tr>
+            <tr><td>АО "АЛЬФА-БАНК" - МЛМ</td><td class="mono">8f5f7e0f-8dfd-4442-8983-57fd73e05ebd</td><td class="mono">8b826ccc-85fc-4cf5-afc6-b1854f800f07</td><td>1</td><td>https://kasko-svoy.insapp.ru/</td><td>11</td></tr>
+            <tr><td>ПАО "МЕГАФОН"</td><td class="mono">f2980e06-fb95-4140-863b-f05c5e79ea75</td><td class="mono">10d4be2e-fa78-40db-a5bb-2217569e7a93</td><td>1</td><td>https://kasko-megafon.insapp.ru/</td><td>5</td></tr>
+            <tr><td>ПАО БАНК ЗЕНИТ</td><td class="mono">b8e8ed68-a371-41ca-ad57-a65a9797ee68</td><td class="mono">2960a383-e4ad-4cb7-a689-3973514a3341</td><td>1</td><td>https://kasko-zenit.insapp.ru/</td><td>5</td></tr>
+            <tr><td>АО "ТАНДЕР"</td><td class="mono">bab1be15-cdef-4243-babd-a06be2e22526</td><td class="mono">04ba923f-b0b7-4f40-9220-3f2cfdd5eabd</td><td>1</td><td>https://magnit.insapp.ru/ko</td><td>3</td></tr>
+            <tr><td>АО "АЛЬФА-БАНК" - Партнеры</td><td class="mono">0b6d2ee0-d2e0-42b6-bbc5-ff39146dbb02</td><td class="mono">ad2e4639-6c6a-4cbd-9e08-b27379f2448a</td><td>1</td><td>https://kasko.ab.insapp.ru/</td><td>0</td></tr>
+            <tr><td>АО "БКС БАНК"</td><td class="mono">e80e4c65-2bbb-4f96-9aa8-f4aff07af210</td><td class="mono">1d851085-9b7c-47cd-8c59-81dee55a2ac7</td><td>1</td><td>https://kasko.bcs.insapp.ru/</td><td>0</td></tr>
+            <tr><td>БАНК ГПБ (АО)</td><td class="mono">fdfa299e-d73b-4392-ae64-2afba954976a</td><td class="mono">44dec4a6-53b7-43e7-bff3-781b7579fc41</td><td>1</td><td>https://kasko-gpb.insapp.ru/</td><td>0</td></tr>
+            <tr><td>ООО "АВТОСПОТ"</td><td class="mono">db40831e-a6f6-487b-8940-2e6e380b84e9</td><td class="mono">ca17376e-9190-4531-9954-952b87df2b83</td><td>1</td><td>https://kasko-autospot.insapp.ru/</td><td>0</td></tr>
+            <tr><td>ООО "ГАЗПРОМНЕФТЬ-РЕГИОНАЛЬНЫЕ ПРОДАЖИ"</td><td class="mono">62062d31-b0fc-4943-bd89-1b8d29e4ba3d</td><td class="mono">38530148-4ad2-4a78-8ac3-3bd9b8242745</td><td>1</td><td>https://kasko-gazp.insapp.ru/</td><td>0</td></tr>
+            <tr><td>ООО "ИНСАП"</td><td class="mono">f8f0dd4c-bc04-4eb8-b088-faa261a5dd0d</td><td class="mono">1d79084d-e417-4384-b0ee-3f874a16ef9f</td><td>1</td><td>https://kasko-website.insapp.ru/</td><td>0</td></tr>
+            <tr><td>ООО "ИНСАП"</td><td class="mono">ac651b0d-7d75-4f22-a6e3-ce3bb0dc0c3c</td><td class="mono">debcb54e-c5bc-4912-acf9-17755c61ab51</td><td>2</td><td>https://kasko-website.insapp.ru/</td><td>0</td></tr>
+            <tr><td>ООО "ИНСАП"</td><td class="mono">94bfc92c-74c3-45c7-bd53-cafc8df556ab</td><td class="mono">1d79084d-e417-4384-b0ee-3f874a16ef9f</td><td>1</td><td>https://kasko-website.insapp.ru/</td><td>0</td></tr>
+            <tr><td>ПАО БАНК ЗЕНИТ</td><td class="mono">ef9ff93f-0258-4c25-b119-5a29aff79557</td><td class="mono">2960a383-e4ad-4cb7-a689-3973514a3341</td><td>1</td><td>https://kasko-zenit.insapp.ru/</td><td>0</td></tr>
+            <tr><td>ПАО КБ "УБРИР"</td><td class="mono">6fe620a8-e658-473b-9596-2b1fc7756fdb</td><td class="mono">7546ebcd-8a08-4b45-ada7-a70039d00870</td><td>1</td><td>https://kasko-ubrr.insapp.ru/</td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" id="agreements">
+      <h2>Догонялки и пользовательские соглашения</h2>
+      <p>Проверка добавлена отдельно от основной воронки: для дочерних KASKO-заявок смотрелись согласия на родительских OSAGO-заявках, обработчик догонялки проверялся по `BusinessLogs`, а фактическая попытка отправки - по `UnisenderLogs`.</p>
+      <div class="grid-2" style="margin-bottom:14px">
+        <div class="callout green"><strong>InsappUserAgreement</strong>134/134 родительских OSAGO заявок имеют `InsappUserAgreement = true`; false и missing не найдены.</div>
+        <div class="callout blue"><strong>InsappMarketingAgreement</strong>42/134 = true, 92/134 = false, missing = 0. Без marketing-согласия догонялка не должна отправляться.</div>
+        <div class="callout amber"><strong>KaskoFromOsagoEmailHandler</strong>По подключенным OSAGO-ключам найдено 149 логов блокировки: письмо не отправлено из-за отсутствия `InsappMarketingAgreement`.</div>
+        <div class="callout red"><strong>UnisenderLogs</strong>42 заявки с `InsappMarketingAgreement = true` не являются целевым знаменателем: письмо должно уходить только по оплаченным OSAGO. В live-срезе paid + marketing = 16. Из них попытки Unisender есть по 5 ApplicationId; у всех 5 `createEmailMessage` успешен, но `createCampaign` вернул ошибку: 2 `Message sending has been disabled`, 3 `The contact list is empty`. Фактическая отправка догонялок не подтверждена.</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Партнер</th><th>Заявок</th><th>Marketing true</th><th>Marketing false</th><th>Marketing missing</th><th>UserAgreement true</th><th>UserAgreement false/missing</th></tr></thead>
+          <tbody>
+            <tr><td>БАНК ГПБ (АО)</td><td>46</td><td>10</td><td>36</td><td>0</td><td>46</td><td>0</td></tr>
+            <tr><td>АО "АЛЬФА-БАНК"</td><td>33</td><td>17</td><td>16</td><td>0</td><td>33</td><td>0</td></tr>
+            <tr><td>ООО "ЛИКАРД"</td><td>31</td><td>12</td><td>19</td><td>0</td><td>31</td><td>0</td></tr>
+            <tr><td>АО "АЛЬФА-БАНК" - МЛМ</td><td>11</td><td>3</td><td>8</td><td>0</td><td>11</td><td>0</td></tr>
+            <tr><td>ПАО "МЕГАФОН"</td><td>5</td><td>0</td><td>5</td><td>0</td><td>5</td><td>0</td></tr>
+            <tr><td>ПАО БАНК ЗЕНИТ</td><td>5</td><td>0</td><td>5</td><td>0</td><td>5</td><td>0</td></tr>
+            <tr><td>АО "ТАНДЕР"</td><td>3</td><td>0</td><td>3</td><td>0</td><td>3</td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="sub" style="margin-top:10px">Проверка `BusinessLogs` шире точных дочерних заявок: фильтр был по 17 подключенным OSAGO-ключам, `ServiceName = KaskoFromOsagoEmailHandler`, `Category = HandleAsync`, период `2026-05-19 00:00:00.000 +03:00` - `2026-05-23 00:00:00.000 +03:00`. Проверка `UnisenderLogs` сужена до paid + marketing родительских OSAGO ApplicationId; HTTP 200 не считался успехом, результат определялся по `ResponseBody`. По 11 paid+marketing заявкам без Unisender-попыток: 8 дочерних KASKO ушли в отказ, 2 остались на Filled без оффера, 1 получил успешный KASKO-оффер. Этот 1 кейс дополнительно проверен отдельно: parent OSAGO `08deb6e3-a6c6-a967-25c3-3e053096b7dd`, child KASKO `08deb6e4-60fa-629b-25c3-3e0530979a04`; ОСАГО оплачено в `2026-05-21 07:00:01.659 +03:00`, KASKO-оффер создан/завершен в `2026-05-21 05:55:15/05:55:16 +03:00`, email у пользователя есть, но `Users.IsUnsubscibedByEmailProvider = true`. В `BusinessLogs` найдены `UnisenderIntegration` и `ReturnKaskoClientByEmailJob` в `07:00-07:01` с сообщением, что пользователь отключил уведомления; поэтому внешних `UnisenderLogs` по parent/child/UserId нет, `ErrorLogs` по кейсу не найдены.</p>
+    </section>
+
+    <section class="panel" id="filled">
+      <h2>Почему 6 заявок остались на Filled</h2>
+      <p>Эти заявки созданы и заполнены, но не отправлены в СК. У них нет `SentToInsurers`, офферов и application exceptions. Причина по логам: Avtocod/enrichment не дал пригодные данные для продолжения расчета.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Партнер</th><th>KASKO ApplicationId</th><th>Parent OSAGO ApplicationId</th><th>Причина по BusinessLogs</th></tr></thead>
+          <tbody>
+            <tr><td>АО "АЛЬФА-БАНК"</td><td class="mono">08deb5b0-e447-974c-25c3-3e2eb86f3885</td><td class="mono">08deb5af-1dfb-827d-25c3-3e2eb86a1474</td><td>`ads.price`: PROGRESS, `mileages.registry`: PROGRESS, `references.base`: ERROR</td></tr>
+            <tr><td>БАНК ГПБ (АО)</td><td class="mono">08deb5d0-1b88-8ad4-25c3-3e053028814c</td><td class="mono">08deb5ce-b545-3708-25c3-3e05302475f5</td><td>`ads.price`: ERROR</td></tr>
+            <tr><td>БАНК ГПБ (АО)</td><td class="mono">08deb5d6-4893-aac5-25c3-3e0530398479</td><td class="mono">08deb5d6-02e4-d5ba-25c3-3e053038b6e2</td><td>`ads.price`: ERROR, `references.base`: ERROR</td></tr>
+            <tr><td>ООО "ЛИКАРД"</td><td class="mono">08deb670-fb5d-6ef3-25c3-3e0530b16495</td><td class="mono">08deb66e-c7bd-ad9f-25c3-3e0530a90d53</td><td>`ads.price`: ERROR, `mileages.registry`: ERROR, `references.base`: ERROR</td></tr>
+            <tr><td>АО "АЛЬФА-БАНК"</td><td class="mono">08deb682-5e59-9b17-25c3-3e0530ec3beb</td><td class="mono">08deb682-1629-0865-25c3-3e0530eb5ebe</td><td>`ads.price`: ERROR</td></tr>
+            <tr><td>БАНК ГПБ (АО)</td><td class="mono">08deb706-0a0b-9e93-25c3-3e0530f1a2d7</td><td class="mono">08deb705-0a9d-4310-25c3-3e0530ed9377</td><td>`ads.price`: PROGRESS, `mileages.registry`: PROGRESS, `references.base`: ERROR</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" id="notes">
+      <h2>Замечания</h2>
+      <div class="grid-2">
+        <div class="callout amber">
+          <strong>Про `KaskoProcessTypeId`</strong>
+          В предыдущей версии отчета колонка была показана неудачно. В новой версии `KaskoProcessTypeId` выведен только для подключенного KASKO-ключа, по которому работает фича. Для связок OSAGO -> KASKO валидируются конкретные поля: `KaskoFromOsagoApiKeyId`, активность ключей, `SupportedProductTypesJson`, KASKO `KaskoProcessTypeId`, `LandingUrl` на KASKO-ключе и фактическое создание дочерних заявок.
+        </div>
+        <div class="callout red">
+          <strong>Сохраняется риск по ГПБ</strong>
+          На OSAGO-ключе `d9d1d57c-0288-48d9-87a9-e22f760154f0` ранее найдено 39 `ErrorLogs`: `Неподдерживаемый KaskoProcessType`. По проверенным примерам дочерние КАСКО не создавались.
+        </div>
+      </div>
+      <details style="margin-top:14px">
+        <summary>Офферы и продажи</summary>
+        <ul>
+          <li>Всего офферов по дочерним КАСКО: 126.</li>
+          <li>Успешные офферы: 51, все `КАСКО "за 3"` от `АО "АЛЬФАСТРАХОВАНИЕ"` с премией 4 950.</li>
+          <li>Отказные офферы: 68.</li>
+          <li>Офферы в статусе 4: 7.</li>
+          <li>Полисов и `TransactionId` по дочерним заявкам фичи нет.</li>
+        </ul>
+      </details>
+    </section>
+
+    <section class="panel" id="method">
+      <h2>Методика</h2>
+      <ul>
+        <li>Дочерние КАСКО искались по `ProductTypeId = 2` и `ApplicationTypeId = 9`.</li>
+        <li>Период: `2026-05-19 00:00:00.000 +03:00` <= `Created` < `2026-05-23 00:00:00.000 +03:00`.</li>
+        <li>Источники: `InsappCoreProd` (`Applications`, `Offers`, `ApplicationStatuses`, `PartnerApiKeys`, `Partners`, `Consents`) и `InsappLogProd` (`BusinessLogs`, `ErrorLogs`).</li>
+        <li>Все запросы read-only SELECT; полные GUID не сокращались.</li>
+      </ul>
+    </section>
+
+    <footer>
+      INS-1657 / КАСКО после ОСАГО. Обновлено 22.05.2026. Источник: InsappCoreProd + InsappLogProd.
+    </footer>
+  </div>
+</body>
+</html>

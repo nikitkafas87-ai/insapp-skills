@@ -1,0 +1,6 @@
+interface:
+  display_name: "Tracker Report Active"
+  short_description: "Summarize work time from journals and Tracker"
+  default_prompt: "Use $tracker-report-active to summarize what I worked on today from session journals, with Tracker cross-checks when useful."
+policy:
+  allow_implicit_invocation: true

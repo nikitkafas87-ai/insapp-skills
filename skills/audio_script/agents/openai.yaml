@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audio Script"
+  short_description: "Free local audio transcription"
+  default_prompt: "Use $audio-script to transcribe local audio for free on Windows."

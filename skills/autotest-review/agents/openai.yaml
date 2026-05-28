@@ -1,0 +1,4 @@
+interface:
+  display_name: "Autotest Review"
+  short_description: "Review and improve autotests"
+  default_prompt: "Review this autotest for stability, coverage, assertions, mocks, selectors, and maintainability."

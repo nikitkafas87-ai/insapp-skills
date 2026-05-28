@@ -1,0 +1,7 @@
+interface:
+  display_name: "Tracker"
+  short_description: "Work with Yandex Tracker"
+  default_prompt: "Use $tracker to create, update, search, comment on, or verify Yandex Tracker issues."
+policy:
+  allow_implicit_invocation: true
+

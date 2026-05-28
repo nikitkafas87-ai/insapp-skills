@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INS-1688 — Тестирование нового apiKey для KaskoFromOsago</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; padding: 20px; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  h2 { font-size: 17px; margin: 28px 0 12px; color: #1a73e8; border-bottom: 2px solid #1a73e8; padding-bottom: 4px; }
+  h3 { font-size: 14px; margin: 14px 0 8px; color: #555; }
+  .subtitle { color: #666; margin-bottom: 16px; font-size: 13px; }
+  .card { background: #fff; border-radius: 8px; padding: 16px 20px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .verdict { font-size: 15px; font-weight: 600; padding: 10px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 10px; }
+  th { background: #f0f0f0; text-align: left; padding: 7px 10px; border-bottom: 2px solid #ddd; font-weight: 600; white-space: nowrap; }
+  td { padding: 5px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+  tr:hover td { background: #fafafa; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .pass { background: #d4edda; color: #155724; }
+  .fail { background: #f8d7da; color: #721c24; }
+  .warn { background: #fff3cd; color: #856404; }
+  .info { background: #d1ecf1; color: #0c5460; }
+  .mono { font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; }
+  .empty { color: #dc3545; font-weight: 600; }
+  .filled { color: #28a745; font-weight: 600; }
+  pre { background: #f8f8f8; padding: 10px; border-radius: 4px; font-size: 12px; overflow-x: auto; border: 1px solid #eee; }
+  .summary-box { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .summary-item { background: #fff; border-radius: 8px; padding: 14px 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); text-align: center; min-width: 120px; }
+  .summary-item .num { font-size: 28px; font-weight: 700; }
+  .summary-item .label { font-size: 12px; color: #666; margin-top: 4px; }
+  .bug-box { background: #f8d7da; border-left: 4px solid #dc3545; padding: 14px; border-radius: 4px; margin: 16px 0; }
+  .ok-box { background: #d4edda; border-left: 4px solid #28a745; padding: 14px; border-radius: 4px; margin: 16px 0; }
+  .warn-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 14px; border-radius: 4px; margin: 16px 0; }
+</style>
+</head>
+<body>
+
+<h1>INS-1688 — Отчёт тестирования</h1>
+<p class="subtitle">КАСКО | Завести дополнительный ключ для АБ (БЭК)-ДЭВ | Партнёр: АО «АЛЬФА-БАНК» | Дата тестирования: 20.04.2026</p>
+
+<div class="summary-box">
+  <div class="summary-item"><div class="num" style="color:#28a745">3</div><div class="label">Требования выполнены</div></div>
+  <div class="summary-item"><div class="num" style="color:#dc3545">2</div><div class="label">Расхождения</div></div>
+  <div class="summary-item"><div class="num" style="color:#856404">1</div><div class="label">Баг (не блокирует)</div></div>
+</div>
+
+<!-- ============================================================== -->
+<h2>Требования и проверка</h2>
+
+<div class="card">
+<table>
+<tr><th>#</th><th>Требование</th><th>Результат</th><th>Комментарий</th></tr>
+
+<tr>
+  <td>1</td>
+  <td>Скопировать настройки с ключа <code>f273ada6ac954e7896cd23b6a10f2e72</code></td>
+  <td><span class="tag warn">ЧАСТИЧНО</span></td>
+  <td>SupportedProductTypesJson=null (ож. [2]), KaskoProcessTypeId=null (ож. 2), 0 продуктов (ож. 30). См. детальное сравнение ниже.</td>
+</tr>
+
+<tr>
+  <td>2</td>
+  <td>Description = «Для KaskoFromOsago;»</td>
+  <td><span class="tag pass">PASS</span></td>
+  <td>Description = «Для KaskoFromOsago;»</td>
+</tr>
+
+<tr>
+  <td>3</td>
+  <td>AllowSkipUserAuthorization = 1</td>
+  <td><span class="tag pass">PASS</span></td>
+  <td>AllowSkipUserAuthorization = true</td>
+</tr>
+
+<tr>
+  <td>4</td>
+  <td>Отключить все СК кроме АС с КАСКО за 3</td>
+  <td><span class="tag warn">ЧАСТИЧНО</span></td>
+  <td>Из 41 СК включена только АЛЬФАСТРАХОВАНИЕ. Но PkaskoDisabled=true, а у исходного ключа = false. См. ниже.</td>
+</tr>
+
+<tr>
+  <td>5</td>
+  <td>Отписать идентификатор ключа в комментарии</td>
+  <td><span class="tag pass">PASS</span></td>
+  <td>Ключ <code>07b2d612fa3f45baae771e8223618e38</code> указан в комментарии Ильёй Блиновым 16.04</td>
+</tr>
+</table>
+</div>
+
+<!-- ============================================================== -->
+<h2>Баг: создание КАСКО-заявки через /app/new</h2>
+
+<div class="card">
+<div class="bug-box">
+<strong>INS-3239</strong> — API <code>/app/new</code> возвращает <code>result: false</code> с ошибкой «Только для заявок с типом продукта КАСКО» при отправке <code>productType: "Kasko"</code>. При этом заявка <strong>реально создаётся</strong> в БД с ProductTypeId=2, но ApplicationId не возвращается. За 20.04 создано 8 КАСКО-заявок через этот ключ — все в БД, ни одна не вернула успешный ответ.<br><br>
+<strong>ОСАОГО</strong> через тот же ключ создаётся корректно. Старый ключ <code>f273ada6ac954e7896cd23b6a10f2e72</code> работает без ошибок.<br><br>
+<strong>Причина:</strong> баг в серверном коде <code>ApplicationService.Create</code>. Илья проверил на тесте — даже после выравнивания всех настроек ошибка сохраняется. Вероятно, привязка к конкретному ApiKeyId в коде.
+</div>
+</div>
+
+<!-- ============================================================== -->
+<h2>Детальное сравнение PartnerApiKeys</h2>
+
+<div class="card">
+<table>
+<tr><th>Поле</th><th>07b2d612fa3f45baae771e8223618e38 (новый)</th><th>f273ada6ac954e7896cd23b6a10f2e72 (исходный)</th><th>Статус</th></tr>
+<tr style="background:#fff3cd"><td>SupportedProductTypesJson</td><td class="empty">null</td><td class="mono">[2]</td><td><span class="tag fail">DIFF</span></td></tr>
+<tr style="background:#fff3cd"><td>KaskoProcessTypeId</td><td class="empty">null</td><td>2 (DirectPayment)</td><td><span class="tag fail">DIFF</span></td></tr>
+<tr style="background:#fff3cd"><td>LandingUrl</td><td class="empty">null</td><td>https://kasko.ab.insapp.ru/</td><td><span class="tag warn">DIFF</span></td></tr>
+<tr style="background:#fff9e6"><td>Description</td><td>Для KaskoFromOsago;</td><td>Дополнительный ключ КАСКО</td><td><span class="tag info">Ожидаемо</span></td></tr>
+<tr style="background:#fff9e6"><td>AllowSkipUserAuthorization</td><td>true</td><td>false</td><td><span class="tag info">Ожидаемо</span></td></tr>
+<tr style="background:#f0fff0"><td>IsActive</td><td colspan="2">true</td><td><span class="tag pass">OK</span></td></tr>
+<tr style="background:#f0fff0"><td>IsDirectPayment</td><td colspan="2">false</td><td><span class="tag pass">OK</span></td></tr>
+<tr style="background:#f0fff0"><td>SegmentationEnabled</td><td colspan="2">true</td><td><span class="tag pass">OK</span></td></tr>
+<tr style="background:#f0fff0"><td>ProlongationEnabled</td><td colspan="2">true</td><td><span class="tag pass">OK</span></td></tr>
+<tr style="background:#f0fff0"><td>ShowBadges</td><td colspan="2">true</td><td><span class="tag pass">OK</span></td></tr>
+<tr style="background:#f0fff0"><td>EmailBrandingEnabled</td><td colspan="2">true</td><td><span class="tag pass">OK</span></td></tr>
+<tr style="background:#f0fff0"><td>IsAgentKey</td><td colspan="2">false</td><td><span class="tag pass">OK</span></td></tr>
+<tr style="background:#f0fff0"><td>GiftsEnabled</td><td colspan="2">false</td><td><span class="tag pass">OK</span></td></tr>
+<tr style="background:#f0fff0"><td>CallbackEnabled</td><td colspan="2">false</td><td><span class="tag pass">OK</span></td></tr>
+</table>
+</div>
+
+<!-- ============================================================== -->
+<h2>PartnerProductSettings — КАСКО-продукты</h2>
+
+<div class="card">
+<table>
+<tr><th>Ключ</th><th>Всего</th><th>Включено</th><th>Отключено</th></tr>
+<tr><td class="mono">07b2d612fa3f45baae771e8223618e38 (новый)</td><td class="empty">0</td><td>—</td><td>—</td></tr>
+<tr><td class="mono">f273ada6ac954e7896cd23b6a10f2e72 (исходный)</td><td class="filled">30</td><td>11</td><td>19</td></tr>
+</table>
+<div class="warn-box">
+<strong>Расхождение:</strong> у нового ключа 0 продуктов (ожидалось копирование из f273ada6ac954e7896cd23b6a10f2e72). При этом продукт «КАСКО за 3» (ProductId <code>2b32991b...</code>, АЛЬФАСТРАХОВАНИЕ) существует в InsurerKaskoProducts и не отключён глобально.
+</div>
+</div>
+
+<!-- ============================================================== -->
+<h2>PartnerInsurerSettings — СК (требование #4)</h2>
+
+<div class="card">
+<h3>07b2d612fa3f45baae771e8223618e38 — включённые СК (1 шт.)</h3>
+<table>
+<tr><th>СК</th><th>InsurerTypeId</th><th>IsDisabled</th><th>PkaskoDisabled</th><th>Reinsurance</th><th>Логин</th></tr>
+<tr>
+  <td>АЛЬФАСТРАХОВАНИЕ</td><td>1 (Alfa)</td>
+  <td><span class="tag pass">false</span></td>
+  <td><span class="tag fail">true</span></td>
+  <td><span class="tag pass">true</span></td>
+  <td class="mono">INSAP09</td>
+</tr>
+</table>
+
+<div class="warn-box">
+<strong>PkaskoDisabled=true</strong> для Альфы, тогда как у исходного ключа f273ada6ac954e7896cd23b6a10f2e72 — <code>false</code>. Это означает, что P-Kasko (мини-каско) недоступно, хотя прямая интеграция КАСКО работает.
+</div>
+
+<h3>f273ada6ac954e7896cd23b6a10f2e72 — включённые СК для сравнения (20 шт.)</h3>
+<table>
+<tr><th>СК</th><th>PkaskoDisabled</th><th>Reinsurance</th></tr>
+<tr><td>АЛЬФАСТРАХОВАНИЕ (Alfa)</td><td><span class="tag pass">false</span></td><td>true</td></tr>
+<tr><td>АЛЬФА ДЭК</td><td>true</td><td>false</td></tr>
+<tr><td>Боровицкое</td><td>false</td><td>—</td></tr>
+<tr><td>Зетта</td><td>true</td><td>false</td></tr>
+<tr><td>МАКС</td><td>true</td><td>false</td></tr>
+<tr><td>ГАЙДЕ</td><td>true</td><td>false</td></tr>
+<tr><td>ПАРИ</td><td>true</td><td>false</td></tr>
+<tr><td>Полис-Гарант</td><td>true</td><td>false</td></tr>
+<tr><td>СОГЛАСИЕ</td><td>true</td><td>false</td></tr>
+<tr><td>Евроинс</td><td>true</td><td>false</td></tr>
+<tr><td>Гелиос</td><td>true</td><td>true</td></tr>
+<tr><td>Спасские Ворота</td><td>true</td><td>false</td></tr>
+<tr><td>ТИТ</td><td>true</td><td>false</td></tr>
+<tr><td>Верна</td><td>true</td><td>false</td></tr>
+<tr><td>АСКО</td><td>true</td><td>false</td></tr>
+<tr><td>Энергогарант</td><td>true</td><td>false</td></tr>
+<tr><td>Росгосстрах</td><td><span class="tag pass">false</span></td><td>false</td></tr>
+<tr><td>ВСК</td><td><span class="tag pass">false</span></td><td>false</td></tr>
+<tr><td>РЕСО</td><td><span class="tag pass">false</span></td><td>false</td></tr>
+<tr><td>Ингосстрах</td><td><span class="tag pass">false</span></td><td>false</td></tr>
+</table>
+
+<h3>07b2d612fa3f45baae771e8223618e38 — все отключённые СК (40 шт.)</h3>
+<table>
+<tr><th>СК</th><th>InsurerTypeId</th><th>ProductTypeId</th></tr>
+<tr><td>Совкомбанк</td><td>12</td><td>2</td></tr>
+<tr><td>InTouch (Ренессанс)</td><td>22</td><td>2</td></tr>
+<tr><td>АЛЬФА ДЭК</td><td>23</td><td>2</td></tr>
+<tr><td>Чулпан</td><td>34</td><td>2</td></tr>
+<tr><td>Боровицкое</td><td>33</td><td>1</td></tr>
+<tr><td>Югория</td><td>16</td><td>2</td></tr>
+<tr><td>Зетта</td><td>5</td><td>2</td></tr>
+<tr><td>МАКС</td><td>7</td><td>2</td></tr>
+<tr><td>ОСК</td><td>31</td><td>2</td></tr>
+<tr><td>Астро-Волга</td><td>26</td><td>2</td></tr>
+<tr><td>ГАЙДЕ</td><td>4</td><td>2</td></tr>
+<tr><td>ПАРИ</td><td>38</td><td>2</td></tr>
+<tr><td>Талисман</td><td>29</td><td>2</td></tr>
+<tr><td>СОГАЗ</td><td>17</td><td>2</td></tr>
+<tr><td>Страховая бизнес группа</td><td>40</td><td>2</td></tr>
+<tr><td>Полис-Гарант</td><td>8</td><td>2</td></tr>
+<tr><td>Т-Страхование</td><td>14</td><td>2</td></tr>
+<tr><td>Армеец</td><td>28</td><td>2</td></tr>
+<tr><td>БАСК</td><td>37</td><td>2</td></tr>
+<tr><td>Двадцать первый век</td><td>27</td><td>2</td></tr>
+<tr><td>Абсолют</td><td>19</td><td>2</td></tr>
+<tr><td>НСГ-РосЭнерго</td><td>30</td><td>2</td></tr>
+<tr><td>Ангара</td><td>39</td><td>2</td></tr>
+<tr><td>СОГЛАСИЕ</td><td>13</td><td>2</td></tr>
+<tr><td>СДС</td><td>36</td><td>2</td></tr>
+<tr><td>Адонис</td><td>32</td><td>2</td></tr>
+<tr><td>Евроинс</td><td>20</td><td>2</td></tr>
+<tr><td>Гелиос</td><td>21</td><td>2</td></tr>
+<tr><td>Паритет-СК</td><td>35</td><td>2</td></tr>
+<tr><td>Сбербанк Страхование</td><td>24</td><td>2</td></tr>
+<tr><td>Спасские Ворота</td><td>25</td><td>2</td></tr>
+<tr><td>ТИТ</td><td>41</td><td>2</td></tr>
+<tr><td>Верна</td><td>3</td><td>2</td></tr>
+<tr><td>АСКО</td><td>18</td><td>2</td></tr>
+<tr><td>Ренессанс</td><td>10</td><td>2</td></tr>
+<tr><td>Энергогарант</td><td>15</td><td>2</td></tr>
+<tr><td>Росгосстрах</td><td>11</td><td>2</td></tr>
+<tr><td>ВСК</td><td>2</td><td>2</td></tr>
+<tr><td>РЕСО</td><td>9</td><td>2</td></tr>
+<tr><td>Ингосстрах</td><td>6</td><td>2</td></tr>
+</table>
+</div>
+
+<!-- ============================================================== -->
+<h2>PartnerOsagoComissions — комиссии</h2>
+
+<div class="card">
+<table>
+<tr><th>Параметр</th><th>07b2d612fa3f45baae771e8223618e38</th><th>f273ada6ac954e7896cd23b6a10f2e72</th></tr>
+<tr><td>Period StartDate</td><td>2026-04-16</td><td>2022-04-05</td></tr>
+<tr><td>ComissionRate</td><td class="empty">0%</td><td class="filled">70%</td></tr>
+<tr><td>ComissionTypeId</td><td colspan="2">1</td></tr>
+<tr><td>InsurerId</td><td colspan="2">null (общая)</td></tr>
+</table>
+<p style="color:#888;font-size:12px;margin-top:6px;">PartnerKaskoComissions — 0 записей у обоих ключей (комиссии КАСКО не настроены для партнёра).</p>
+</div>
+
+<!-- ============================================================== -->
+<h2>Доказательство: заявки создаются в БД (баг INS-3239)</h2>
+
+<div class="card">
+<p>Запрос <code>InsappCoreProd.Applications</code> где <code>ApiKeyId = 'b35c7579...'</code> (07b2d612fa3f45baae771e8223618e38), за 20.04.2026:</p>
+<table>
+<tr><th>ApplicationId</th><th>ProductTypeId</th><th>Created</th><th>IsPaid</th></tr>
+<tr><td class="mono">08de9eb4-cacb...</td><td>1 (ОСАГО)</td><td>11:14</td><td>false</td></tr>
+<tr><td class="mono">08de9eb4-bad3...</td><td>2 (КАСКО)</td><td>11:13</td><td>false</td></tr>
+<tr><td class="mono">08de9eb2-fb44...</td><td>2 (КАСКО)</td><td>11:01</td><td>false</td></tr>
+<tr><td class="mono">08de9eb2-f789...</td><td>1 (ОСАГО)</td><td>11:01</td><td>false</td></tr>
+<tr><td class="mono">08de9eb2-627d...</td><td>2 (КАСКО)</td><td>10:56</td><td>false</td></tr>
+<tr><td class="mono">08de9eb0-bd8c...</td><td>2 (КАСКО)</td><td>10:45</td><td>false</td></tr>
+<tr><td class="mono">08de9eb0-afd5...</td><td>2 (КАСКО)</td><td>10:44</td><td>false</td></tr>
+<tr><td class="mono">08de9eb0-8cc6...</td><td>2 (КАСКО)</td><td>10:43</td><td>false</td></tr>
+<tr><td class="mono">08de9eb0-6fa8...</td><td>2 (КАСКО)</td><td>10:42</td><td>false</td></tr>
+<tr><td class="mono">08de9eae-8837...</td><td>2 (КАСКО)</td><td>10:29</td><td>false</td></tr>
+</table>
+<p><strong>8 из 10 — КАСКО</strong>. ОСАГО-заявки возвращают ApplicationId корректно. КАСКО — нет.</p>
+</div>
+
+<!-- ============================================================== -->
+<h2>Итог</h2>
+
+<div class="card">
+<table>
+<tr><th>Проверка</th><th>Результат</th></tr>
+<tr><td>Ключ создан</td><td><span class="tag pass">PASS</span></td></tr>
+<tr><td>Ключ указан в комментарии INS-1688</td><td><span class="tag pass">PASS</span></td></tr>
+<tr><td>Description = «Для KaskoFromOsago;»</td><td><span class="tag pass">PASS</span></td></tr>
+<tr><td>AllowSkipUserAuthorization = true</td><td><span class="tag pass">PASS</span></td></tr>
+<tr><td>АЛЬФА включена, остальные СК отключены</td><td><span class="tag pass">PASS</span></td></tr>
+<tr><td>Поддержка продукта КАСКО за 3 (Альфа)</td><td><span class="tag pass">PASS</span></td></tr>
+<tr><td>Настройки скопированы из f273ada6ac954e7896cd23b6a10f2e72</td><td><span class="tag fail">FAIL</span> — SupportedProductTypesJson, KaskoProcessTypeId, PartnerProductSettings не скопированы</td></tr>
+<tr><td>PkaskoDisabled=false для АС</td><td><span class="tag fail">FAIL</span> — true вместо false</td></tr>
+<tr><td>Создание КАСКО-заявки через API</td><td><span class="tag warn">BUG</span> — INS-3239, заявка создаётся, но ответ = false</td></tr>
+</table>
+</div>
+
+</body>
+</html>
