@@ -34,3 +34,5 @@
 | `kasko-regression-report` | `https://nikitkafas87-ai.github.io/kasko-regression-report/` | `standalone/kasko-regression-report/index.html` | `df07645` |
 | `ab-black-friday-errors-2026-04-24` | `https://nikitkafas87-ai.github.io/ab-black-friday-errors-2026-04-24/` | `standalone/ab-black-friday-errors-2026-04-24/index.html` | `c6d6b6d` |
 | `ins1657-kasko-review` | `https://nikitkafas87-ai.github.io/ins1657-kasko-review/` | `standalone/ins1657-kasko-review/index.html` | `c0237e3` |
+| `base64-bug-report` | Pages URL сейчас не отвечает: `https://nikitkafas87-ai.github.io/base64-bug-report/` | `standalone/base64-bug-report/index.html` | `788a244` |
+| `base64-decode-bug-report` | Pages URL сейчас не отвечает: `https://nikitkafas87-ai.github.io/base64-decode-bug-report/` | `standalone/base64-decode-bug-report/index.html` | `929aa76` |

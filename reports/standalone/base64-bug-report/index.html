@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регресс-отчёт КАСКО — InsappCoreTest</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+
+        /* Header */
+        .header { background: linear-gradient(135deg, #1e293b, #334155); color: white; padding: 28px 30px; border-radius: 12px; margin-bottom: 20px; }
+        .header h1 { font-size: 22px; margin-bottom: 6px; }
+        .header .meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; opacity: 0.85; }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 4px; margin-bottom: 0; }
+        .tab-btn {
+            padding: 12px 20px; border: none; background: #e2e8f0; color: #475569;
+            cursor: pointer; font-size: 14px; font-weight: 600; border-radius: 10px 10px 0 0;
+            transition: all 0.2s; position: relative; top: 1px;
+        }
+        .tab-btn:hover { background: #cbd5e1; }
+        .tab-btn.active { background: white; color: #1e293b; box-shadow: 0 -2px 6px rgba(0,0,0,0.06); }
+        .tab-btn .badge-count {
+            display: inline-block; background: #ef4444; color: white; font-size: 11px;
+            padding: 1px 7px; border-radius: 10px; margin-left: 6px; font-weight: 700;
+        }
+        .tab-btn .badge-count.p0 { background: #dc2626; }
+        .tab-btn .badge-count.p1 { background: #f59e0b; color: #1e293b; }
+        .tab-btn .badge-count.p2 { background: #94a3b8; }
+
+        .tab-content { display: none; background: white; border-radius: 0 10px 10px 10px; padding: 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .tab-content.active { display: block; }
+
+        /* Sections inside tabs */
+        .section-title { font-size: 17px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid #f1f5f9; color: #1e293b; }
+        .subsection { margin-bottom: 24px; }
+
+        /* Description box */
+        .desc-box { padding: 14px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
+        .desc-box.red { background: #fef2f2; border-left: 4px solid #ef4444; }
+        .desc-box.orange { background: #fff7ed; border-left: 4px solid #f97316; }
+        .desc-box.blue { background: #eff6ff; border-left: 4px solid #3b82f6; }
+        .desc-box.green { background: #f0fdf4; border-left: 4px solid #22c55e; }
+
+        /* Stats grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
+        .stat-card { background: #f8f9fa; border-radius: 8px; padding: 14px; text-align: center; border: 1px solid #e9ecef; }
+        .stat-card .value { font-size: 26px; font-weight: 700; }
+        .stat-card .value.red { color: #dc2626; }
+        .stat-card .value.orange { color: #ea580c; }
+        .stat-card .value.blue { color: #2563eb; }
+        .stat-card .label { font-size: 12px; color: #666; margin-top: 2px; }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { background: #f8fafc; padding: 10px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 9px 12px; border-bottom: 1px solid #f1f5f9; }
+        tr:hover td { background: #fafbfc; }
+
+        /* Code */
+        code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; font-size: 12px; color: #be123c; }
+        .code-block { background: #1e293b; color: #a5f3fc; padding: 16px; border-radius: 8px; overflow-x: auto; font-family: 'Consolas', 'Monaco', monospace; font-size: 12px; line-height: 1.5; margin: 12px 0; }
+
+        /* Severity */
+        .severity { display: inline-block; padding: 3px 10px; border-radius: 12px; font-weight: 600; font-size: 12px; }
+        .severity.p0 { background: #fee2e2; color: #991b1b; }
+        .severity.p1 { background: #fef3c7; color: #92400e; }
+        .severity.p2 { background: #e0f2fe; color: #075985; }
+
+        /* Timeline */
+        .timeline { position: relative; padding-left: 28px; }
+        .timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: #e2e8f0; }
+        .tl-item { position: relative; margin-bottom: 14px; padding: 10px 14px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0; }
+        .tl-item::before { content: ''; position: absolute; left: -22px; top: 14px; width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; border: 2px solid white; }
+        .tl-item.first::before { background: #ef4444; }
+        .tl-item .time { font-size: 11px; color: #94a3b8; font-weight: 600; }
+        .tl-item .event { font-size: 13px; margin-top: 2px; }
+
+        /* Recommendations */
+        .rec-list { list-style: none; }
+        .rec-list li { padding: 10px 14px; margin-bottom: 6px; background: #eff6ff; border-radius: 6px; border-left: 3px solid #3b82f6; font-size: 13px; }
+        .rec-list li strong { color: #1d4ed8; }
+
+        /* Chart */
+        .chart-container { margin: 14px 0; padding: 14px; background: #f8fafc; border-radius: 8px; }
+        .bar-chart { display: flex; align-items: flex-end; gap: 3px; height: 100px; }
+        .bar { flex: 1; background: linear-gradient(to top, #3b82f6, #60a5fa); border-radius: 3px 3px 0 0; position: relative; min-width: 16px; }
+        .bar:hover { opacity: 0.8; }
+        .bar .bar-value { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font-size: 10px; font-weight: 600; color: #333; }
+
+        /* Impact table */
+        .impact td:first-child { font-weight: 500; white-space: nowrap; }
+
+        /* Collapsible */
+        .collapsible { cursor: pointer; padding: 10px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 4px; font-weight: 600; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
+        .collapsible:hover { background: #f1f5f9; }
+        .collapsible .arrow { transition: transform 0.2s; font-size: 12px; color: #94a3b8; }
+        .collapsible.open .arrow { transform: rotate(180deg); }
+        .collapse-body { display: none; padding: 14px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 6px 6px; margin-bottom: 8px; }
+        .collapse-body.open { display: block; }
+
+        /* Footer */
+        .footer { text-align: center; padding: 16px; color: #94a3b8; font-size: 12px; }
+
+        /* Responsive: mobile-first */
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .header { padding: 18px 16px; border-radius: 10px; }
+            .header h1 { font-size: 17px; }
+            .header .meta { gap: 8px; font-size: 12px; }
+
+            /* Tabs: vertical stack on mobile */
+            .tabs { flex-direction: column; gap: 2px; }
+            .tab-btn {
+                border-radius: 8px; padding: 10px 14px; font-size: 13px;
+                display: flex; align-items: center; justify-content: space-between;
+            }
+            .tab-btn.active { border-radius: 8px; }
+            .tab-content { border-radius: 0 0 10px 10px; padding: 16px 12px; }
+
+            /* Stats: 2 columns */
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .stat-card { padding: 10px 8px; }
+            .stat-card .value { font-size: 22px; }
+            .stat-card .label { font-size: 11px; }
+
+            /* Tables: horizontal scroll */
+            .subsection { margin-bottom: 16px; }
+            .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -12px; padding: 0 12px; }
+            table { font-size: 12px; min-width: 500px; }
+            th, td { padding: 8px 10px; }
+            .section-title { font-size: 15px; }
+
+            /* Collapsible */
+            .collapsible { font-size: 13px; padding: 8px 12px; }
+            .collapse-body { padding: 10px 12px; }
+
+            /* Code blocks */
+            .code-block { font-size: 11px; padding: 12px; }
+
+            /* Desc boxes */
+            .desc-box { font-size: 13px; padding: 10px 12px; }
+
+            /* Timeline */
+            .timeline { padding-left: 22px; }
+            .tl-item { padding: 8px 10px; }
+            .tl-item .event { font-size: 12px; }
+
+            /* Recommendations */
+            .rec-list li { font-size: 12px; padding: 8px 10px; }
+
+            /* Impact table */
+            .impact td:first-child { white-space: normal; font-size: 12px; }
+
+            /* Footer */
+            .footer { font-size: 11px; padding: 12px; }
+        }
+        @media (max-width: 400px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .stat-card .value { font-size: 20px; }
+            .header h1 { font-size: 15px; }
+            .tab-btn { font-size: 12px; padding: 8px 12px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <h1>Регресс-отчёт КАСКО &mdash; InsappCoreTest</h1>
+        <div class="meta">
+            <span>Период: 17&ndash;23.04.2026 (7 дней)</span>
+            <span>БД: InsappCoreTest / InsappLogTest</span>
+            <span>Найдено багов: 2 критических</span>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab('tab-overview')">Обзор</button>
+        <button class="tab-btn" onclick="openTab('tab-base64')">Base-64 Decode <span class="badge-count p0">300</span></button>
+        <button class="tab-btn" onclick="openTab('tab-nullref')">NullReference <span class="badge-count p0">878</span></button>
+    </div>
+
+    <!-- TAB: Overview -->
+    <div id="tab-overview" class="tab-content active">
+        <h2 class="section-title">Общая картина за 7 дней</h2>
+
+        <div class="stats-grid">
+            <div class="stat-card"><div class="value blue">902</div><div class="label">Заявок КАСКО</div></div>
+            <div class="stat-card"><div class="value blue">7</div><div class="label">Оплачено</div></div>
+            <div class="stat-card"><div class="value red">878</div><div class="label">NullReference</div></div>
+            <div class="stat-card"><div class="value red">300</div><div class="label">Base-64 ошибок</div></div>
+            <div class="stat-card"><div class="value orange">1,103</div><div class="label">ConnectTimeout</div></div>
+            <div class="stat-card"><div class="value orange">884</div><div class="label">Таймауты ВСК</div></div>
+        </div>
+
+        <h2 class="section-title">Найденные баги</h2>
+        <div class="table-wrap"><table>
+            <tr><th>Баг</th><th>Ошибок</th><th>Продукт</th><th>Приоритет</th><th>Статус</th></tr>
+            <tr>
+                <td>NullReference при обработке КАСКО без авто</td>
+                <td>878</td>
+                <td>КАСКО (100%)</td>
+                <td><span class="severity p0">P0</span></td>
+                <td style="color:#dc2626; font-weight:600;">Активен, растёт</td>
+            </tr>
+            <tr>
+                <td>Base-64 decode в PaymentStatusFallbackJob</td>
+                <td>300</td>
+                <td>Все (ОСАГО+КАСКО)</td>
+                <td><span class="severity p0">P0</span></td>
+                <td style="color:#dc2626; font-weight:600;">Активен, 12/час</td>
+            </tr>
+        </table></div>
+
+        <div class="subsection" style="margin-top:20px;">
+            <h2 class="section-title">Контекст: все ошибки за 7 дней</h2>
+            <div class="table-wrap"><table>
+                <tr><th>Ошибка</th><th>Кол-во</th><th>Приоритет</th></tr>
+                <tr><td>ConnectTimeout (соединение с БД)</td><td>1,103</td><td><span class="severity p1">P1</span></td></tr>
+                <tr><td>NullReference (КАСКО без авто)</td><td>878</td><td><span class="severity p0">P0</span></td></tr>
+                <tr><td>Connection timeout (ответ сервера)</td><td>356</td><td><span class="severity p1">P1</span></td></tr>
+                <tr><td style="background:#fef2f2; font-weight:600;">Base-64 decode error</td><td style="background:#fef2f2;">300</td><td style="background:#fef2f2;"><span class="severity p0">P0</span></td></tr>
+                <tr><td>The method or operation is not implemented</td><td>84</td><td><span class="severity p2">P2</span></td></tr>
+                <tr><td>I/O operation aborted (thread exit)</td><td>40</td><td><span class="severity p2">P2</span></td></tr>
+            </table></div>
+        </div>
+    </div>
+
+    <!-- TAB: Base-64 -->
+    <div id="tab-base64" class="tab-content">
+        <h2 class="section-title">Base-64 Decode Error &mdash; OsagoPaymentStatusFallbackJob</h2>
+        <div class="desc-box red">
+            Фоновый джоб <code>OsagoPaymentStatusFallbackJob</code> падает каждые 5 минут с ошибкой
+            <strong>&laquo;Invalid length for a Base-64 char array or string&raquo;</strong>.
+            За 2 дня накоплено 300+ ошибок. Не КАСКО-специфичный &mdash; системный баг.
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><div class="value red">300+</div><div class="label">Ошибок за 2 дня</div></div>
+            <div class="stat-card"><div class="value">~12/час</div><div class="label">Частота</div></div>
+            <div class="stat-card"><div class="value">95%</div><div class="label">AppId = NULL</div></div>
+            <div class="stat-card"><div class="value">0</div><div class="label">StackTrace</div></div>
+        </div>
+
+        <div class="subsection">
+            <div class="collapsible" onclick="toggleCollapse(this)">Хронология <span class="arrow">&#9660;</span></div>
+            <div class="collapse-body">
+                <div class="timeline">
+                    <div class="tl-item first">
+                        <div class="time">22.04.2026 11:13</div>
+                        <div class="event">Первое срабатывание. Триггер &mdash; ОСАГО заявка <code>#5940433</code> (СК МАКС). Джоб попытался декодировать ответ СК.</div>
+                    </div>
+                    <div class="tl-item">
+                        <div class="time">22.04.2026 11:13 &ndash; 23:59</div>
+                        <div class="event">150+ ошибок в первый день. Стабильная частота ~12/час.</div>
+                    </div>
+                    <div class="tl-item">
+                        <div class="time">23.04.2026 00:00 &ndash; 18:00</div>
+                        <div class="event">150+ ошибок во второй день. <code>ApplicationId = NULL</code> в 286/300 записей. Проблема не самоустранилась.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <div class="collapsible" onclick="toggleCollapse(this)">Корневая причина <span class="arrow">&#9660;</span></div>
+            <div class="collapse-body">
+                <div class="table-wrap"><table>
+                    <tr><td>Источник</td><td><code>OsagoPaymentStatusFallbackJob</code></td></tr>
+                    <tr><td>Текст ошибки</td><td><code>Invalid length for a Base-64 char array or string</code></td></tr>
+                    <tr><td>Trigger-заявка</td><td>ОСАГО #5940433, СК МАКС</td></tr>
+                    <tr><td>ApplicationId в логе</td><td><strong>NULL</strong> в 95% записей</td></tr>
+                    <tr><td>StackTrace</td><td>Отсутствует</td></tr>
+                    <tr><td>Периодичность</td><td>Каждые 5 минут (cron джоба)</td></tr>
+                    <tr><td>Затронутые продукты</td><td><strong>Все</strong> &mdash; ОСАГО и КАСКО</td></tr>
+                </table></div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <div class="collapsible" onclick="toggleCollapse(this)">Рекомендации <span class="arrow">&#9660;</span></div>
+            <div class="collapse-body">
+                <ul class="rec-list">
+                    <li><strong>1. try-catch вокруг FromBase64String</strong><br>При ошибке &mdash; логировать StackTrace и пропускать запись.</li>
+                    <li><strong>2. Логировать ApplicationId всегда</strong><br>95% записей без идентификатора &mdash; невозможно диагностировать.</li>
+                    <li><strong>3. Проверить заявку #5940433</strong><br>Ответ СК МАКС содержит невалидный Base-64. Возможно, СК изменила формат.</li>
+                    <li><strong>4. Валидация Base-64 перед декодированием</strong><br>Длина кратна 4, только допустимые символы.</li>
+                    <li><strong>5. Алертинг</strong><br>&gt;3 падений подряд &rarr; уведомление дежурному.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB: NullReference -->
+    <div id="tab-nullref" class="tab-content">
+        <h2 class="section-title">NullReference &mdash; КАСКО заявки без данных авто</h2>
+        <div class="desc-box red">
+            <code>Insapp.Services</code> падает при обработке КАСКО заявок, в которых не заполнены данные автомобиля, собственника и страхователя.
+            Код обращается к <code>Application.Car</code>, <code>.Owner</code>, <code>.Insured</code> без null-check.
+            На каждую заявку генерируется 13 NullReference ошибок (по числу офферов).
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><div class="value red">878</div><div class="label">Ошибок за 7 дней</div></div>
+            <div class="stat-card"><div class="value red">96</div><div class="label">Заявок затронуто</div></div>
+            <div class="stat-card"><div class="value">100%</div><div class="label">CarId = NULL</div></div>
+            <div class="stat-card"><div class="value">13</div><div class="label">Ошибок на заявку</div></div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Корневая причина</h3>
+            <div class="desc-box green">
+                <strong>Установлена.</strong> Заявки КАСКО создаются на раннем этапе (статус WidgetDisplayed или RejectAllInsurers) без заполнения данных авто.
+                Система всё равно отправляет запросы в 3 СК (Альфа &times;8, Т-Страхование &times;3, ВСК &times;2 = 13 офферов).
+                При обработке результатов код обращается к навигационным свойствам <code>Car</code>, <code>Owner</code>, <code>Insured</code> &mdash; которые NULL.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <div class="collapsible open" onclick="toggleCollapse(this)">Доказательство <span class="arrow">&#9660;</span></div>
+            <div class="collapse-body open">
+                <p style="font-size:13px; margin-bottom:10px;">Все 96 заявок с NullReference: CarId=NULL, OwnerId=NULL, InsuredId=NULL:</p>
+                <div class="code-block">
+// Пример: заявка #5940953 (23.04.2026 18:03)
+Application:
+  CarId      = NULL    // Нет данных авто
+  OwnerId    = NULL    // Нет собственника
+  InsuredId  = NULL    // Нет страхователя
+  Driver1Id  = NULL    // Нет водителей
+  UserId     = 3914f21e-... (заполнен)
+  ProductTypeId = 2 (КАСКО)
+  Status = RejectAllInsurers
+
+Offers (13 штук):
+  Альфа ×8 → OfferStatus=Failed, ErrorMessage=NULL
+  Т-Страхование ×3 → OfferStatus=Failed, ErrorMessage=NULL
+  ВСК ×2 → OfferStatus=Failed, ErrorMessage=NULL
+
+ErrorLogs (13 штук в 18:03:42):
+  "Object reference not set to an instance of an object."
+  Source: Insapp.Services (13) + Insapp.Models (0)
+  StackTrace: NULL
+                </div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <div class="collapsible" onclick="toggleCollapse(this)">Распределение по дням <span class="arrow">&#9660;</span></div>
+            <div class="collapse-body">
+                <div class="table-wrap"><table>
+                    <tr><th>Дата</th><th>Ошибок</th><th>Заявок</th><th>Тренд</th></tr>
+                    <tr><td>16.04</td><td>3</td><td>&mdash;</td><td></td></tr>
+                    <tr><td>17.04</td><td>216</td><td>&mdash;</td><td style="color:#dc2626;">всплеск</td></tr>
+                    <tr><td>20.04</td><td>29</td><td>&mdash;</td><td></td></tr>
+                    <tr><td>21.04</td><td>8</td><td>&mdash;</td><td></td></tr>
+                    <tr><td>22.04</td><td>258</td><td>&mdash;</td><td style="color:#dc2626;">всплеск</td></tr>
+                    <tr><td>23.04</td><td>364</td><td>96</td><td style="color:#dc2626; font-weight:700;">растёт!</td></tr>
+                </table></div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <div class="collapsible" onclick="toggleCollapse(this)">Данные по заявкам <span class="arrow">&#9660;</span></div>
+            <div class="collapse-body">
+                <div class="table-wrap"><table>
+                    <tr><th>Параметр</th><th>Значение</th></tr>
+                    <tr><td>Продукт</td><td><strong>100% КАСКО</strong> (ProductTypeId=2)</td></tr>
+                    <tr><td>Статус</td><td>RejectAllInsurers (все СК отказали)</td></tr>
+                    <tr><td>Источник</td><td>Insapp.Services (838) + Insapp.Models (40)</td></tr>
+                    <tr><td>StackTrace</td><td>Отсутствует (не логируется)</td></tr>
+                    <tr><td>CarId</td><td><strong>NULL</strong> в 100% заявок</td></tr>
+                    <tr><td>OwnerId</td><td><strong>NULL</strong> в 100% заявок</td></tr>
+                    <tr><td>InsuredId</td><td><strong>NULL</strong> в 100% заявок</td></tr>
+                    <tr><td>UserId</td><td>Заполнен</td></tr>
+                    <tr><td>ApiKeyId</td><td>Заполнен</td></tr>
+                    <tr><td>Офферов на заявку</td><td>13 (Альфа×8, Т-Страхование×3, ВСК×2)</td></tr>
+                    <tr><td>Статус офферов</td><td>Failed (4), ErrorMessage=NULL</td></tr>
+                </table></div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <div class="collapsible" onclick="toggleCollapse(this)">Рекомендации <span class="arrow">&#9660;</span></div>
+            <div class="collapse-body">
+                <ul class="rec-list">
+                    <li><strong>1. Не отправлять запросы в СК без данных авто</strong><br>Если CarId=NULL &rarr; не создавать офферы, не отправлять в СК. Это устранит и NullReference, и бессмысленные запросы.</li>
+                    <li><strong>2. Добавить null-check в Insapp.Services</strong><br>Перед обращением к <code>Application.Car</code>, <code>.Owner</code>, <code>.Insured</code> проверять на null.</li>
+                    <li><strong>3. Логировать StackTrace</strong><br>Сейчас StackTrace=NULL &mdash; невозможно определить точную строку кода.</li>
+                    <li><strong>4. Заполнять ErrorMessage у оффера</strong><br>Сейчас Failed-офферы имеют ErrorMessage=NULL. Нужно писать причину: "Missing car data".</li>
+                    <li><strong>5. Проверить бизнес-логику</strong><br>Почему заявка без авто уходит в SentToInsurers? Нужна валидация на переходе статуса.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 class="section-title">Оценка влияния</h3>
+            <div class="table-wrap"><table class="impact">
+                <tr><th>Аспект</th><th>Оценка</th><th>Комментарий</th></tr>
+                <tr><td>Влияние на клиентов</td><td style="color:#ea580c; font-weight:600;">Среднее</td><td>Заявки без авто не могут получить оффер. Но пользовательский опыт ухудшается.</td></tr>
+                <tr><td>Засорение логов</td><td style="color:#dc2626; font-weight:600;">Высокое</td><td>878 записей за 7 дней, растёт. Затрудняет поиск других ошибок.</td></tr>
+                <tr><td>Нагрузка на СК API</td><td style="color:#ea580c; font-weight:600;">Среднее</td><td>96×13 = 1,248 бессмысленных запросов в СК за неделю.</td></tr>
+                <tr><td>Риск эскалации</td><td style="color:#dc2626; font-weight:600;">Высокий</td><td>Растёт: 3→216→258→364. Если трафик вырастет &mdash; ошибок будет кратно больше.</td></tr>
+            </table></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Регресс-тестирование КАСКО &bull; InsappCoreTest / InsappLogTest &bull; 23.04.2026
+    </div>
+
+</div>
+
+<script>
+function openTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    event.currentTarget.classList.add('active');
+}
+function toggleCollapse(el) {
+    el.classList.toggle('open');
+    const body = el.nextElementSibling;
+    body.classList.toggle('open');
+}
+</script>
+</body>
+</html>
