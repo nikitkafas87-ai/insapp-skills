@@ -1,0 +1,12 @@
+{
+  "version": 3,
+  "environment": "Prod",
+  "maxWorkingSourcesPerAlias": 3,
+  "statusValues": [
+    "working",
+    "needsRefresh",
+    "stale",
+    "invalid"
+  ],
+  "sources": []
+}
